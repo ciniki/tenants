@@ -151,7 +151,7 @@ function ciniki_tenants_subscriptionInfo($ciniki) {
     $rsp = array('stat'=>'ok', 'subscription'=>$subscription, 
         'paypal'=>array(
             'url'=>$ciniki['config']['ciniki.tenants']['paypal.url'],
-            'tenant'=>$ciniki['config']['ciniki.tenants']['paypal.tenant'],
+            'business'=>$ciniki['config']['ciniki.tenants']['paypal.business'],
             'prefix'=>$ciniki['config']['ciniki.tenants']['paypal.item_name.prefix'],
             'ipn'=>$ciniki['config']['ciniki.tenants']['paypal.ipn']
             ),
