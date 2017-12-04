@@ -1,0 +1,70 @@
+#
+# Description
+# -----------
+# The tenant_details table stores extra information for a
+# tenant such as configuration, options, and other values
+# required.  This table provides the 
+# flexibility to store only what is required for each tenant.
+#
+# The commonly used information is stored directly in the 
+# tenants table for fast indexing and searching.
+#
+# Some examples:
+# - config.tenant.year_end = <number> (date of their fiscal year end)
+#
+# - contact.address.street = <string>
+# - contact.address.city = <string>
+# - contact.address.province = <string>
+# - contact.address.postal = <string>
+# - contact.address.country = <string>
+# - contact.person.name = <string> optional name of the contact person
+# - contact.phone.number = <string>
+# - contact.cell.number = <string>
+# - contact.tollfree.number = <string>
+# - contact.tollfree.restrictions = <string>
+# - contact.fax.number = <string>
+# - contact.email = <string>
+#
+# Social Media settings
+# - social-twitter-username = <string>
+# - social-facebook-url = <string>
+# - social-flickr-url = <string>
+# - social-etsy-url = <string>
+# - social-pinterest-username = <string>
+# - social-tumblr-username = <string>
+# - social-youtube-username = <string>
+# - social-vimeo-url = <string>
+# - social-instagram-username = <string>
+#
+# Remote services API connections
+# - apis-dropbox-access-token
+#
+# Set up the international settings for the tenant.  This is used
+# 
+# - intl-default-locale = <string> Default to en_US
+# - intl-default-currency = <string> Default to USD
+# - intl-default-timezone = <string> Default to America/Toronto
+#
+# - mossi.theme = <string>
+# - custom.name = <string> (custom fields created by user)
+#
+# **Note** tenant config information might need it's own table or module.
+#
+#
+# Fields
+# ------
+# tnid:         The id of the tenant the detail is for.
+# detail_key:   The unique key for the detail.
+# detail_value: The value stored for this key.
+# date_added:   The UTC date and time the entry was created in the database.
+# last_updated: The UTC date and time the entry was last updated.
+#
+create table ciniki_tenant_details (
+    tnid int not null,
+    detail_key varchar(50) not null,
+    detail_value varchar(6000) not null,
+    date_added datetime not null,
+    last_updated datetime not null,
+    primary key (tnid, detail_key),
+    index (last_updated)
+) ENGINE=InnoDB, COMMENT='v1.02';

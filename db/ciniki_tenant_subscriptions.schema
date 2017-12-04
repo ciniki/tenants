@@ -1,0 +1,91 @@
+#
+# Description
+# -----------
+# This table stores the subscriptions for tenants.
+#
+# Fields
+# ------
+# id:                   The subscription id.
+# tnid:                 The id of the tenant.
+#
+# status:               The current status of the subscription.
+#
+#                        0 - unknown
+#                        1 - Update required at paypal
+#                        2 - Trial persion, Payment information required
+#                       10 - Active
+#                       11 - Free Subscription
+#                       50 - Suspended
+#                       60 - Cancelled
+#                       61 - Pending cancel at paypal
+#
+# signup_date:          The UTC date and time the tenant was created in the system.  
+#                       This is used to calculated the trial period.
+# trial_start_date:     The start date of the trial.
+# trial_days:           The number of days the trial should last.
+#
+# currency:             USD, CAD - The currency the tenant pays in.
+# monthly:              The monthly amount to be payed.
+# yearly:               The yearly amount to be payed.
+# discount_percent:     The discount to be applied in a percentage.
+# discount_amount:      The discount to be applied in a dollar value.
+#
+# billing_email:        The email address to use for billing.
+#
+# payment_type:         Must be 'paypal', but others might be allowed in the future.
+#
+#                       paypal - payment is processed through paypal
+#                       stripe - payment is processed through stripe
+#                       cheque - Payments are made by cheque
+#
+# payment_frequency:    The frequency of payments/subscription
+#
+#                       0 - Unknown
+#                       10 - Monthly
+#                       20 - Yearly
+#   
+# paypal_subscr_id:     The subscr_id from paypal that submitted the payment.
+# paypal_payer_email:   The paypal payer_email who submitted the payment.
+# paypal_payer_id:      The payer_id from paypal of who submitted the payment.
+# paypal_amount:        The amount set in the subscription at paypal, updated from IPN.
+#
+# stripe_customer_id:       The ID for the customer at stripe.
+# stripe_subscription_id:   The ID for the customer subscription at stripe.
+#
+# last_payment_date:    The UTC date and time the last payment was received.
+# paid_until:           The UTC date and time the tenant is paid up until.
+#
+# notes:                Any notes on the tenant.
+#
+# date_added:           The UTC date and time the record was created.
+# last_updated:         The UTC date and time the record was last_updated.
+# 
+create table ciniki_tenant_subscriptions (
+    id int not null auto_increment,
+    tnid int not null,
+    status tinyint unsigned not null,
+    signup_date datetime not null,
+    trial_start_date datetime not null,
+    trial_days int not null,
+    currency varchar(20) not null,
+    monthly decimal(10,2) not null,
+    yearly decimal(10,2) not null,
+    discount_percent int not null,
+    discount_amount int not null,
+    billing_email varchar(250) not null,
+    payment_type varchar(20) not null,
+    payment_frequency tinyint unsigned not null,
+    paypal_subscr_id varchar(100) not null,
+    paypal_payer_email varchar(250) not null,
+    paypal_payer_id varchar(100) not null,
+    paypal_amount decimal(10,2) not null,
+    stripe_customer_id varchar(100) not null,
+    stripe_subscription_id varchar(100) not null,
+    last_payment_date datetime not null,
+    paid_until date not null,
+    notes varchar(6000) not null,
+    date_added datetime not null,
+    last_updated datetime not null,
+    primary key (id),
+    unique index (tnid)
+) ENGINE=InnoDB, COMMENT='v1.05';

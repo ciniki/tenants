@@ -1,0 +1,47 @@
+#
+# Description
+# -----------
+# This table will store permissions for modules/methods for tenants.  This will
+# allow the restrictions of each module to be determined from this table.
+#
+# Fields
+# ------
+# tnid:                     The id of the tenant the permissions is for.
+#
+# package:                  The package the module is part of, default 'ciniki'.
+#
+# module:                   The module the ruleset will apply to.
+#
+# status:                   The status of the module for this tenant.
+#
+#                           0 - off
+#                           1 - on
+#                           2 - mandatory
+#
+# flags:                    Module specific flags.  This allows for different features/sections 
+#                           of a module to be enabled/disabled.
+#                           Allows for 64 different flags.
+#
+# ruleset:                  The ruleset name from the modules private/getRulesets.php file.
+#                           There are no standards flags, they are set within the module.
+#
+# date_added:               The UTC date and time this entry was created in the database.
+# last_updated:             The UTC date and time this entry was last updated.
+# last_change:              The UTC date and time any data in the module was last updated.  This
+#                           field is used for syncronization purposes.  It is updated by the functions
+#                           dbUpdate, dbDelete, dbInsert, dbReplace.  The remote system will compare these
+#                           values with the last sync time to see if an update needs to happen.
+#
+create table ciniki_tenant_modules (
+    tnid int not null,
+    package varchar(50) not null,
+    module varchar(50) not null,
+    status tinyint not null,
+    flags bigint unsigned not null,
+    ruleset varchar(50) not null,
+    date_added datetime not null,
+    last_updated datetime not null,
+    last_change datetime not null,
+    primary key (tnid, package, module),
+    index (last_updated)
+) ENGINE=InnoDB, COMMENT='v1.04';

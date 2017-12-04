@@ -1,0 +1,7 @@
+#
+# This file will upgrade the database table tenants to version 1.05.
+#
+ALTER TABLE ciniki_tenants ADD COLUMN sitename varchar(150) not null AFTER name;
+UPDATE ciniki_tenants SET sitename = REPLACE(LOWER(name), ' ', '-');
+CREATE UNIQUE INDEX sitename ON ciniki_tenants (sitename);
+ALTER TABLE ciniki_tenants COMMENT='v1.05';
