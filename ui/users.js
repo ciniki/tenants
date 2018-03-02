@@ -14,7 +14,7 @@ function ciniki_tenants_users() {
         '7':{'name':'Bio'},
         };
 
-    this.users = new M.panel('Tenant Owners',
+    this.users = new M.panel('Owners & Employees',
         'ciniki_tenants_users', 'users',
         'mc', 'medium', 'sectioned', 'ciniki.tenants.users');
     this.users.data = {};
