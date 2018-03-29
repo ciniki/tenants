@@ -108,10 +108,11 @@ function ciniki_tenants_settings() {
                     'webdomains':{'label':'Domains', 'fn':'M.startApp(\'ciniki.tenants.domains\', null, \'M.ciniki_tenants_settings.menu.show();\');'},
                     'assets':{'label':'Image Assets', 'fn':'M.startApp(\'ciniki.tenants.assets\', null, \'M.ciniki_tenants_settings.menu.show();\');'},
                     'fixhistory':{'label':'Fix History', 'fn':'M.ciniki_tenants_settings.fixallhistory();'},
-                    'checkimages':{'label':'Check Image Storage', 'fn':'M.ciniki_tenants_settings.checkimagestorage("no");'},
-                    'checkimagesclean':{'label':'Check Image Storage & Clean DB', 'fn':'M.ciniki_tenants_settings.checkimagestorage("yes");'},
-                    'moveproductfiles':{'label':'Check Product Files', 'fn':'M.ciniki_tenants_settings.moveproductstorage("no");'},
-                    'moveproductfilesclean':{'label':'Check Product Files & Clean DB', 'fn':'M.ciniki_tenants_settings.moveproductstorage("yes");'},
+                    'imagecropper':{'label':'Image Cropper', 'fn':'M.startApp(\'ciniki.images.cropper\', null, \'M.ciniki_tenants_settings.menu.show();\');'},
+//                    'checkimages':{'label':'Check Image Storage', 'fn':'M.ciniki_tenants_settings.checkimagestorage("no");'},
+//                    'checkimagesclean':{'label':'Check Image Storage & Clean DB', 'fn':'M.ciniki_tenants_settings.checkimagestorage("yes");'},
+//                    'moveproductfiles':{'label':'Check Product Files', 'fn':'M.ciniki_tenants_settings.moveproductstorage("no");'},
+//                    'moveproductfilesclean':{'label':'Check Product Files & Clean DB', 'fn':'M.ciniki_tenants_settings.moveproductstorage("yes");'},
     //              'fixhistory':{'label':'Fix History', 'fn':'M.startApp(\'ciniki.tenants.fixhistory\', null, \'M.ciniki_tenants_settings.menu.show();\');'},
                     }};
                 if( M.curTenant.modules['ciniki.artclub'] != null ) {
