@@ -1,0 +1,5 @@
+#
+# This file adds the flags field to store options for a tenant.
+#
+ALTER TABLE ciniki_tenants ADD COLUMN flags smallint unsigned not null AFTER category;
+ALTER TABLE ciniki_tenants COMMENT='v1.09';

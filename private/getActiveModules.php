@@ -21,7 +21,7 @@ function ciniki_tenants_getActiveModules($ciniki, $tnid) {
     $strsql = "SELECT ciniki_tenants.status AS tenant_status, "
         . "ciniki_tenant_modules.status AS module_status, "
         . "CONCAT_WS('.', ciniki_tenant_modules.package, ciniki_tenant_modules.module) AS module_id, "
-        . "flags, flags>>32 as flags2, ruleset "
+        . "ciniki_tenant_modules.flags, ciniki_tenant_modules.flags>>32 as flags2, ruleset "
         . "FROM ciniki_tenants, ciniki_tenant_modules "
         . "WHERE ciniki_tenants.id = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "AND ciniki_tenants.id = ciniki_tenant_modules.tnid "

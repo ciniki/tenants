@@ -5,10 +5,6 @@
 // This function will get detail values for a tenant.  These values
 // are used many places in the API and MOSSi.
 //
-// Info
-// ----
-// Status: beta
-//
 // Arguments
 // ---------
 // api_key:
@@ -55,7 +51,6 @@ function ciniki_tenants_getDetails($ciniki) {
 
     // Split the keys, if specified
     if( isset($args['keys']) && $args['keys'] != '' ) {
-//  if( isset($ciniki['request']['args']['keys']) && $ciniki['request']['args']['keys'] != '' ) {
         $detail_keys = preg_split('/,/', $args['keys']);
     } else {
         return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.tenants.46', 'msg'=>'No keys specified'));
@@ -69,7 +64,8 @@ function ciniki_tenants_getDetails($ciniki) {
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbDetailsQueryDash');
     foreach($detail_keys as $detail_key) {
         if( $detail_key == 'tenant' ) {
-            $strsql = "SELECT name, category, sitename, tagline FROM ciniki_tenants "
+            $strsql = "SELECT name, category, sitename, tagline "
+                . "FROM ciniki_tenants "
                 . "WHERE id = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' ";
             $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.tenants', 'tenant');
             if( $rc['stat'] != 'ok' ) {
