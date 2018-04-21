@@ -17,7 +17,7 @@ function ciniki_tenants_flags($ciniki, $modules) {
         array('flag'=>array('bit'=>'3', 'name'=>'Warehouse', 'group'=>'ciniki.warehouse')),
         array('flag'=>array('bit'=>'4', 'name'=>'Marketing', 'group'=>'ciniki.marketing')),
 //      0x10
-//      array('flag'=>array('bit'=>'5', 'name'=>'')),
+        array('flag'=>array('bit'=>'5', 'name'=>'Retail', 'group'=>'ciniki.retail')),
 //      array('flag'=>array('bit'=>'6', 'name'=>'')),
 //      array('flag'=>array('bit'=>'7', 'name'=>'')),
 //      array('flag'=>array('bit'=>'8', 'name'=>'')),
