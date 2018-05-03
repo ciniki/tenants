@@ -64,10 +64,8 @@ function ciniki_tenants_getUserTenants($ciniki) {
         }
 
         if( isset($ciniki['config']['ciniki.sysadmin']['bigboard']) && $ciniki['config']['ciniki.sysadmin']['bigboard'] == 'yes' ) {
-            $rc['bigboard'] = 'yes';
+            $rsp['bigboard'] = 'yes';
         }
-
-        return $rc;
     } else {
         $strsql = "SELECT DISTINCT ciniki_tenants.id, name "
             . "FROM ciniki_tenant_users, ciniki_tenants "
@@ -76,23 +74,15 @@ function ciniki_tenants_getUserTenants($ciniki) {
             . "AND ciniki_tenant_users.tnid = ciniki_tenants.id "
             . "AND ciniki_tenants.status < 60 "  // Allow suspended tenants to be listed, so user can login and update billing/unsuspend
             . "ORDER BY ciniki_tenant_users.permission_group, ciniki_tenants.name ";
-//      $strsql = "SELECT DISTINCT id, name, ciniki_tenant_users.permission_group, "
-//          . "d1.detail_value AS css "
-//          . "FROM ciniki_tenant_users, ciniki_tenants "
-//          . "LEFT JOIN ciniki_tenant_details AS d1 ON (ciniki_tenants.id = d1.tnid AND d1.detail_key = 'ciniki.manage.css') "
-//          . "WHERE ciniki_tenant_users.user_id = '" . ciniki_core_dbQuote($ciniki, $ciniki['session']['user']['id']) . "' "
-//          . "AND ciniki_tenant_users.status = 1 "
-//          . "AND ciniki_tenant_users.tnid = ciniki_tenants.id "
-//          . "AND ciniki_tenants.status < 60 "  // Allow suspended tenants to be listed, so user can login and update billing/unsuspend
-//          . "ORDER BY ciniki_tenants.name ";
+
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbRspQuery');
+        $rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'ciniki.tenants', 'tenants', 'tenant', array('stat'=>'fail', 'err'=>array('code'=>'ciniki.tenants.50', 'msg'=>'No tenants found')));
+        if( $rc['stat'] != 'ok' ) {
+            return $rc;
+        }
+        $rsp = $rc;
     }
 
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbRspQuery');
-    $rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'ciniki.tenants', 'tenants', 'tenant', array('stat'=>'fail', 'err'=>array('code'=>'ciniki.tenants.50', 'msg'=>'No tenants found')));
-    if( $rc['stat'] != 'ok' ) {
-        return $rc;
-    }
-
-    return $rc;
+    return $rsp;
 }
 ?>
