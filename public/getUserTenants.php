@@ -41,13 +41,6 @@ function ciniki_tenants_getUserTenants($ciniki) {
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQuote');
     if( ($ciniki['session']['user']['perms'] & 0x01) == 0x01 ) {
-        //
-        // Check if there is a debug file of action to do on login
-        //
-        if( file_exists($ciniki['config']['ciniki.core']['root_dir'] . '/loginactions.js') ) {
-            $login_actions = file_get_contents($ciniki['config']['ciniki.core']['root_dir'] . '/loginactions.js'); 
-        }
-
         $strsql = "SELECT ciniki_tenants.category, "
             . "ciniki_tenants.id, "
             . "ciniki_tenants.name "
@@ -61,9 +54,17 @@ function ciniki_tenants_getUserTenants($ciniki) {
             array('container'=>'tenants', 'fname'=>'id', 'name'=>'tenant',
                 'fields'=>array('id', 'name')),
             ));
+        $rsp = $rc;
 
-        if( isset($login_actions) && $login_actions != '' ) {
-            $rc['loginActions'] = $login_actions;
+        //
+        // Check if there is a debug file of action to do on login
+        //
+        if( file_exists($ciniki['config']['ciniki.core']['root_dir'] . '/loginactions.js') ) {
+            $rsp['loginActions'] = file_get_contents($ciniki['config']['ciniki.core']['root_dir'] . '/loginactions.js'); 
+        }
+
+        if( isset($ciniki['config']['ciniki.sysadmin']['bigboard']) && $ciniki['config']['ciniki.sysadmin']['bigboard'] == 'yes' ) {
+            $rc['bigboard'] = 'yes';
         }
 
         return $rc;
