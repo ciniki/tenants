@@ -13,6 +13,13 @@
 #
 # category:     The category name for use by sysadmin.  Allows admins to view tenants by category, helps to keep them sorted.
 #
+# flags:        The options for the tenant.
+#
+#                   0x01 - Website reseller, this looks for sitenames with reseller_id set.
+#                   0x02 - 
+#                   0x04 - 
+#                   0x08 - 
+#
 # tagline:      The brief one line tenant description.
 #
 # sitename:     The unique name of the tenant website.  Used in web delivery, and must be
@@ -44,6 +51,7 @@ create table ciniki_tenants (
     name varchar(150) not null,
     category varchar(150) not null,
     sitename varchar(150) not null,
+    flags smallint unsigned not null,
     tagline varchar(255) not null,
     description text not null,
     status tinyint unsigned not null,
@@ -56,4 +64,4 @@ create table ciniki_tenants (
     index (last_updated),
     unique index (uuid),
     unique index (sitename)
-) ENGINE=InnoDB, COMMENT='v1.08';
+) ENGINE=InnoDB, COMMENT='v1.09';
