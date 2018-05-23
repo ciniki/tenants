@@ -471,6 +471,31 @@ function ciniki_tenants_main() {
         }
 
         //
+        // Check for archived modules
+        //
+        if( r.archived_items != null ) {
+            c++;
+            this.menu.sections[c] = {'label':'Archive', 'list':{}};
+            for(var i in r.archived_items) {
+                var item = {'label':r.archived_items[i].label};
+                if( r.archived_items[i].edit != null ) {
+                    var args = '';
+                    if( r.archived_items[i].edit.args != null ) {
+                        for(var j in r.archived_items[i].edit.args) {
+                            args += (args != '' ? ', ':'') + '\'' + j + '\':' + eval(r.archived_items[i].edit.args[j]);
+                        }
+                        item.fn = 'M.startApp(\'' + r.archived_items[i].edit.app + '\',null,\'M.ciniki_tenants_main.showMenu();\',\'mc\',{' + args + '});';
+                    } else {
+                        item.fn = 'M.startApp(\'' + r.archived_items[i].edit.app + '\',null,\'M.ciniki_tenants_main.showMenu();\');';
+                    }
+                } else if( r.archived_items[i].fn != null ) {
+                    item.fn = r.archived_items[i].fn;
+                }
+                this.menu.sections[c].list['item_' + i] = item;
+            }
+        }
+
+        //
         // Setup the auto split if long menu
         //
         if( join > 8 ) {

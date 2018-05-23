@@ -70,9 +70,12 @@ function ciniki_tenants_getModules($ciniki) {
     foreach($mod_list as $module) {
         if( $module['label'] != '' && $module['installed'] == 'Yes' && (!isset($module['optional']) || $module['optional'] == 'yes') ) {
             $modules[$count] = array('label'=>$module['label'], 'package'=>$module['package'], 'name'=>$module['name'], 'status'=>'0');
-            if( isset($tenant_modules[$module['package'] . '.' . $module['name']]) 
-                && $tenant_modules[$module['package'] . '.' . $module['name']]['status'] == 1 ) {
-                $modules[$count]['status'] = '1';
+            if( isset($tenant_modules[$module['package'] . '.' . $module['name']]) ) {
+                if( $tenant_modules[$module['package'] . '.' . $module['name']]['status'] == 1 ) {
+                    $modules[$count]['status'] = '1';
+                } elseif( $tenant_modules[$module['package'] . '.' . $module['name']]['status'] == 90 ) {
+                    $modules[$count]['status'] = '90';
+                } 
             }
             $count++;
         }

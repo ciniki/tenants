@@ -104,15 +104,18 @@ function ciniki_tenants_getUserSettings($ciniki) {
     // FIXME: Add check to see which groups the user is part of, and only hand back the module list
     //        for what they have access to.
     //
-    $strsql = "SELECT CONCAT_WS('.', package, module) AS name, package, module, flags, flags>>32 as flags2 "
+    $strsql = "SELECT CONCAT_WS('.', package, module) AS name, package, module, status, flags, flags>>32 as flags2 "
         . "FROM ciniki_tenant_modules "
-        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
-        . "AND (status = 1 OR status = 2) " // Added or mandatory
-        . "";
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' ";
+    if( in_array('owners', $groups) || ($ciniki['session']['user']['perms']&0x01) == 0x01 ) {
+        $strsql .= "AND (status = 1 OR status = 2 OR status = 90) "; // Added, mandatory or archvied
+    } else {
+        $strsql .= "AND (status = 1 OR status = 2) "; // Added or mandatory
+    }
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
     $mrc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.tenants', array(
         array('container'=>'modules', 'fname'=>'name',
-            'fields'=>array('name', 'package', 'module', 'flags', 'flags2')),
+            'fields'=>array('name', 'package', 'module', 'status', 'flags', 'flags2')),
         ));
     if( $mrc['stat'] != 'ok' ) {
         return $mrc;
@@ -146,7 +149,14 @@ function ciniki_tenants_getUserSettings($ciniki) {
                     $rsp['settings'][$module['name']] = $rc['settings'];
                 }
                 if( isset($rc['menu_items']) ) {
-                    $rsp['menu_items'] = array_merge($rsp['menu_items'], $rc['menu_items']);
+                    if( $module['status'] == 90 ) {
+                        if( !isset($rsp['archived_items']) ) {
+                            $rsp['archived_items'] = array();
+                        }
+                        $rsp['archived_items'] = array_merge($rsp['archived_items'], $rc['menu_items']);
+                    } else {
+                        $rsp['menu_items'] = array_merge($rsp['menu_items'], $rc['menu_items']);
+                    }
                 }
                 if( isset($rc['settings_menu_items']) ) {
                     $rsp['settings_menu_items'] = array_merge($rsp['settings_menu_items'], $rc['settings_menu_items']);

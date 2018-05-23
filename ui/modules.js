@@ -23,7 +23,7 @@ function ciniki_tenants_modules() {
             for(i in rsp.modules) {
                 p.data[rsp.modules[i].package + '.' + rsp.modules[i].name] = rsp.modules[i];
                 p.sections.modules.fields[rsp.modules[i].package + '.' + rsp.modules[i].name] = {
-                    'id':rsp.modules[i].name, 'label':rsp.modules[i].label, 'type':'toggle', 'toggles':{'0':' Off ', '1':' On '},
+                    'id':rsp.modules[i].name, 'label':rsp.modules[i].label, 'type':'toggle', 'toggles':{'0':' Off ', '1':'Active', '90':'Archived'},
                     };
             }
             p.show(cb);

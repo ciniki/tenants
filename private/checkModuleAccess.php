@@ -29,7 +29,7 @@ function ciniki_tenants_checkModuleAccess(&$ciniki, $tnid, $package, $module) {
         . "WHERE ciniki_tenants.id = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "AND ciniki_tenants.id = ciniki_tenant_modules.tnid "
         // Get the options and mandatory module
-        . "AND (ciniki_tenant_modules.status = 1 || ciniki_tenant_modules.status = 2) "
+        . "AND (ciniki_tenant_modules.status = 1 || ciniki_tenant_modules.status = 2 || ciniki_tenant_modules.status = 90) "
 //      . "AND ciniki_tenant_modules.package = '" . ciniki_core_dbQuote($ciniki, $package) . "' "
 //      . "AND ciniki_tenant_modules.module = '" . ciniki_core_dbQuote($ciniki, $module) . "' "
         . "";
@@ -68,6 +68,7 @@ function ciniki_tenants_checkModuleAccess(&$ciniki, $tnid, $package, $module) {
     if( isset($rc['modules'][$package . '.' . $module]['module_status']) 
         && $rc['modules'][$package . '.' . $module]['module_status'] != 1 
         && $rc['modules'][$package . '.' . $module]['module_status'] != 2 
+        && $rc['modules'][$package . '.' . $module]['module_status'] != 90 
         ) {
         return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.tenants.20', 'msg'=>'Module disabled'));
     }
