@@ -44,8 +44,12 @@ if( $rc['stat'] != 'ok' ) {
 $input = @file_get_contents("php://input");
 $event_json = json_decode($input, true);
 
-file_put_contents("/tmp/last_stripe_webhook", print_r($event_json, true));
-error_log(print_r($event_json, true));
+if( isset($ciniki['config']['ciniki.core']['log_dir']) && $ciniki['config']['ciniki.core']['log_dir'] != '' ) {
+    file_put_contents($ciniki['config']['ciniki.core']['log_dir'] . "/stripe.log", print_r($event_json, true));
+}
+#file_put_contents($ciniki_root ."//last_stripe_webhook", print_r($event_json, true));
+#file_put_contents("/tmp/last_stripe_webhook", print_r($event_json, true));
+#error_log(print_r($event_json, true));
 
 
 //
