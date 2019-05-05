@@ -69,6 +69,28 @@ function ciniki_tenants_userAdd(&$ciniki) {
         if( ($ciniki['session']['user']['perms'] & 0x01) == 0x01 && $args['permission_group'] == 'resellers' ) {
             $found = 'yes';
         }
+        //
+        // Load permissions groups from hooks
+        //
+        if( ciniki_core_checkModuleFlags($ciniki, 'ciniki.tenants', 0x040000) ) {
+            foreach($ciniki['tenant']['modules'] as $module) {
+                $rc = ciniki_core_loadMethod($ciniki, $module['package'], $module['module'], 'hooks', 'permissionGroups');
+                if( $rc['stat'] == 'ok' ) {
+                    $fn = $rc['function_call'];
+                    $rc = $fn($ciniki, $args['tnid'], array());
+                    if( $rc['stat'] != 'ok' ) {
+                        return $rc;
+                    }
+                    if( isset($rc['permission_groups']) ) {
+                        foreach($rc['permission_groups'] as $k => $g) {
+                            if( $k == $args['permission_group'] ) {
+                                $found = 'yes';
+                            }
+                        }
+                    }
+                }
+            }
+        }
         if( $found == 'no' ) {
             return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.tenants.96', 'msg'=>'Invalid permissions'));
         }

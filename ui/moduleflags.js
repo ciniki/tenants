@@ -3,7 +3,7 @@
 function ciniki_tenants_moduleflags() {
     this.modules = null;
 
-    this.modules = new M.panel('Modules', 'ciniki_tenants_moduleflags', 'modules', 'mc', 'medium', 'sectioned', 'ciniki.tenants.moduleflags.modules');
+    this.modules = new M.panel('Modules', 'ciniki_tenants_moduleflags', 'modules', 'mc', 'xlarge', 'sectioned', 'ciniki.tenants.moduleflags.modules');
     this.modules.data = {};
     this.modules.fieldValue = function(s, i, d) { return this.data[i].flags; }
     this.modules.fieldHistoryArgs = function(s, i) {

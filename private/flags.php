@@ -14,10 +14,10 @@ function ciniki_tenants_flags($ciniki, $modules) {
 //      0x01
         array('flag'=>array('bit'=>'1', 'name'=>'Employees', 'group'=>'ciniki.employees')),
         array('flag'=>array('bit'=>'2', 'name'=>'Sales Reps', 'group'=>'ciniki.salesreps')),
-        array('flag'=>array('bit'=>'3', 'name'=>'Warehouse', 'group'=>'ciniki.warehouse')),
-        array('flag'=>array('bit'=>'4', 'name'=>'Marketing', 'group'=>'ciniki.marketing')),
+//        array('flag'=>array('bit'=>'3', 'name'=>'Warehouse', 'group'=>'ciniki.warehouse')), // Removed May 2019
+//        array('flag'=>array('bit'=>'4', 'name'=>'Marketing', 'group'=>'ciniki.marketing')), // Removed May 2019
 //      0x10
-        array('flag'=>array('bit'=>'5', 'name'=>'Retail', 'group'=>'ciniki.retail')),
+//        array('flag'=>array('bit'=>'5', 'name'=>'Retail', 'group'=>'ciniki.retail')), // Removed May 2019
 //      array('flag'=>array('bit'=>'6', 'name'=>'')),
 //      array('flag'=>array('bit'=>'7', 'name'=>'')),
 //      array('flag'=>array('bit'=>'8', 'name'=>'')),
@@ -34,7 +34,7 @@ function ciniki_tenants_flags($ciniki, $modules) {
         // 0x010000
         array('flag'=>array('bit'=>'17', 'name'=>'External ID')),
         array('flag'=>array('bit'=>'18', 'name'=>'Backups')),           // Backups with core/scripts/backup-cron.php
-//        array('flag'=>array('bit'=>'19', 'name'=>'')),
+        array('flag'=>array('bit'=>'19', 'name'=>'Module Permissions')),
 //      array('flag'=>array('bit'=>'20', 'name'=>'')),
         );
 
