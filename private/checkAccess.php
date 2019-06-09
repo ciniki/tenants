@@ -173,6 +173,18 @@ function ciniki_tenants_checkAccess(&$ciniki, $tnid, $method) {
     }
 
     //
+    // Authenticated methods
+    //
+    if( ciniki_core_checkModuleFlags($ciniki, 'ciniki.tenants', 0x040000) ) {
+        $authenticated_methods = array(
+            'ciniki.tenants.getUserSettings',
+            );
+        if( in_array($method, $authenticated_methods) ) {
+            return array('stat'=>'ok', 'modules'=>$modules, 'groups'=>$groups);
+        }
+    }
+
+    //
     // By default fail
     //
     return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.tenants.14', 'msg'=>'Access denied'));

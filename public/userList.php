@@ -66,6 +66,28 @@ function ciniki_tenants_userList($ciniki) {
     }
 
     //
+    // Get the additional module permission groups
+    //
+    if( ciniki_core_checkModuleFlags($ciniki, 'ciniki.tenants', 0x040000) ) {
+        foreach($ciniki['tenant']['modules'] as $module) {
+            $rc = ciniki_core_loadMethod($ciniki, $module['package'], $module['module'], 'hooks', 'permissionGroups');
+            if( $rc['stat'] == 'ok' ) {
+                $fn = $rc['function_call'];
+                $rc = $fn($ciniki, $args['tnid'], array());
+                if( $rc['stat'] != 'ok' ) {
+                    return $rc;
+                }
+                if( isset($rc['permission_groups']) ) {
+                    foreach($rc['permission_groups'] as $k => $g) {
+                        $rsp['permission_groups'][$k] = $g;
+                    }
+                }
+            }
+        }
+    }
+
+
+    //
     // Get the list of users who have access to this tenant
     //
     $strsql = "SELECT ciniki_tenant_users.user_id, "

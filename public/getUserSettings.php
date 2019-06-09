@@ -87,7 +87,7 @@ function ciniki_tenants_getUserSettings($ciniki) {
     //
     // Get the permission_groups for the user requesting the tenant information
     //
-    $strsql = "SELECT permission_group AS name, 'yes' AS status "
+    $strsql = "SELECT CONCAT_WS('.', package, permission_group) AS name, 'yes' AS status "
         . "FROM ciniki_tenant_users "
         . "WHERE ciniki_tenant_users.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' " 
         . "AND ciniki_tenant_users.user_id = '" . ciniki_core_dbQuote($ciniki, $ciniki['session']['user']['id']) . "' "
@@ -99,6 +99,18 @@ function ciniki_tenants_getUserSettings($ciniki) {
         return $rc;
     }
     $rsp['permissions'] = $rc['permissions'];
+    if( isset($rsp['permissions']['ciniki.owners']) ) {
+        $rsp['permissions']['owners'] = $rsp['permissions']['ciniki.owners'];
+    }
+    if( isset($rsp['permissions']['ciniki.employees']) ) {
+        $rsp['permissions']['employees'] = $rsp['permissions']['ciniki.employees'];
+    }
+    if( isset($rsp['permissions']['ciniki.salesreps']) ) {
+        $rsp['permissions']['salesreps'] = $rsp['permissions']['ciniki.salesreps'];
+    }
+    if( isset($rsp['permissions']['ciniki.resellers']) ) {
+        $rsp['permissions']['resellers'] = $rsp['permissions']['ciniki.resellers'];
+    }
 
     //
     // FIXME: Add check to see which groups the user is part of, and only hand back the module list

@@ -19,10 +19,7 @@
 #               owners - complete access to tenant database and all information
 #               employees - reduced set of permssions
 #               salesreps - sales rep
-#               warehouse - warehouse staff, shippers, receivers
-#               marketing - access to social media, blogging, etc
 #               reseller - The reseller who has control over some things.
-#               retail - The user has permissions to the retail portion of ciniki.
 # 
 # status:       The current status of the user.
 #
