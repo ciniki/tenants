@@ -66,7 +66,7 @@ function ciniki_tenants_apis() {
             M.cookieSet('auth_token',M.api.token,1);
             M.cookieSet('tnid',M.curTenantID,1);
             M.cookieSet('dropbox',this.main.data.apis.dropbox.csrf,1);
-            window.open('https://www.dropbox.com/1/oauth2/authorize?client_id=' + this.main.data.apis.dropbox.appkey + '&response_type=code&redirect_uri=' + encodeURIComponent(this.main.data.apis.dropbox.redirect) + '&state=' + this.main.data.apis.dropbox.csrf, '_blank');
+            window.open('https://www.dropbox.com/oauth2/authorize?client_id=' + this.main.data.apis.dropbox.appkey + '&response_type=code&redirect_uri=' + encodeURIComponent(this.main.data.apis.dropbox.redirect) + '&state=' + this.main.data.apis.dropbox.csrf, '_blank');
             // Close the main panel so the user must open it again to see new status.
             this.main.close();
         } else {
