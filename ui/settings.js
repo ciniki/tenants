@@ -74,9 +74,9 @@ function ciniki_tenants_settings() {
         }
     
         //
-        // Advaned options for Sysadmins or resellers
+        // Advaned options for Sysadmins or resellers, only on server installs
         //
-        if( M.userID > 0 && ((M.userPerms&0x01) == 0x01 || M.curTenant.permissions.resellers != null) ) {
+        if( M.blackbox == null && M.userID > 0 && ((M.userPerms&0x01) == 0x01 || M.curTenant.permissions.resellers != null) ) {
             //
             // Setup the advanced section for resellers and admins
             //
@@ -101,24 +101,24 @@ function ciniki_tenants_settings() {
             //
             // Setup the sysadmin only options
             //
-            if( M.userID > 0 && (M.userPerms&0x01) == 0x01 ) {
+            if( M.blackbox == null && M.userID > 0 && (M.userPerms&0x01) == 0x01 ) {
                 this.menu.sections['admin'] = {'label':'SysAdmin', 'list':{
                     'sync':{'label':'Syncronization', 'fn':'M.startApp(\'ciniki.tenants.sync\', null, \'M.ciniki_tenants_settings.menu.show();\');'},
                     'CSS':{'label':'CSS', 'fn':'M.startApp(\'ciniki.tenants.css\', null, \'M.ciniki_tenants_settings.menu.show();\');'},
                     'webdomains':{'label':'Domains', 'fn':'M.startApp(\'ciniki.tenants.domains\', null, \'M.ciniki_tenants_settings.menu.show();\');'},
                     'assets':{'label':'Image Assets', 'fn':'M.startApp(\'ciniki.tenants.assets\', null, \'M.ciniki_tenants_settings.menu.show();\');'},
-                    'fixhistory':{'label':'Fix History', 'fn':'M.ciniki_tenants_settings.fixallhistory();'},
+//                    'fixhistory':{'label':'Fix History', 'fn':'M.ciniki_tenants_settings.fixallhistory();'},
                     'imagecropper':{'label':'Image Cropper', 'fn':'M.startApp(\'ciniki.images.cropper\', null, \'M.ciniki_tenants_settings.menu.show();\');'},
-                    'ifbupgrade':{'label':'IFB Upgrade', 'fn':'M.startApp(\'ciniki.customers.ifbupgrade\', null, \'M.ciniki_tenants_settings.menu.show();\');'},
+//                    'ifbupgrade':{'label':'IFB Upgrade', 'fn':'M.startApp(\'ciniki.customers.ifbupgrade\', null, \'M.ciniki_tenants_settings.menu.show();\');'},
 //                    'checkimages':{'label':'Check Image Storage', 'fn':'M.ciniki_tenants_settings.checkimagestorage("no");'},
 //                    'checkimagesclean':{'label':'Check Image Storage & Clean DB', 'fn':'M.ciniki_tenants_settings.checkimagestorage("yes");'},
 //                    'moveproductfiles':{'label':'Check Product Files', 'fn':'M.ciniki_tenants_settings.moveproductstorage("no");'},
 //                    'moveproductfilesclean':{'label':'Check Product Files & Clean DB', 'fn':'M.ciniki_tenants_settings.moveproductstorage("yes");'},
     //              'fixhistory':{'label':'Fix History', 'fn':'M.startApp(\'ciniki.tenants.fixhistory\', null, \'M.ciniki_tenants_settings.menu.show();\');'},
                     }};
-                if( M.curTenant.modules['ciniki.artclub'] != null ) {
-                    this.menu.sections.admin.list['movemembers'] = {'label':'Move Members', 'fn':'M.ciniki_tenants_settings.movemembers();'};
-                }
+//                if( M.curTenant.modules['ciniki.artclub'] != null ) {
+//                    this.menu.sections.admin.list['movemembers'] = {'label':'Move Members', 'fn':'M.ciniki_tenants_settings.movemembers();'};
+//                }
                 if( M.curTenantID == M.masterTenantID ) {
                     this.menu.sections.admin.list['plans'] = {'label':'Plans', 'fn':'M.startApp(\'ciniki.tenants.plans\', null, \'M.ciniki_tenants_settings.menu.show();\');'};
                 }
