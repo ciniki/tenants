@@ -199,7 +199,7 @@ function ciniki_tenants_main() {
             //
             this.menu.addButton('account', 'Account', 'M.startApp(\'ciniki.users.main\',null,\'M.home();\');');
             this.menu.addLeftButton('logout', 'Logout', 'M.logout();');
-            if( M.userID > 0 && (M.userPerms&0x01) == 0x01 ) {
+            if( M.stMode == null && M.userID > 0 && (M.userPerms&0x01) == 0x01 ) {
                 this.menu.addLeftButton('sysadmin', 'Admin', 'M.startApp(\'ciniki.sysadmin.main\',null,\'M.home();\');');
             }
 //          M.menuHome = this.menu;
