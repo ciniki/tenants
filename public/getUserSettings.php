@@ -52,9 +52,14 @@ function ciniki_tenants_getUserSettings($ciniki) {
     // Get the tenant name, and CSS
     // FIXME: convert ciniki.manage.css to ciniki-manage-css
     //
-    $strsql = "SELECT name, d1.detail_value AS css "
+    $strsql = "SELECT ciniki_tenants.name, "
+        . "ciniki_tenants.flags, "
+        . "d1.detail_value AS css "
         . "FROM ciniki_tenants "
-        . "LEFT JOIN ciniki_tenant_details AS d1 ON (ciniki_tenants.id = d1.tnid AND d1.detail_key = 'ciniki.manage.css') "
+        . "LEFT JOIN ciniki_tenant_details AS d1 ON ("
+            . "ciniki_tenants.id = d1.tnid "
+            . "AND d1.detail_key = 'ciniki.manage.css'"
+            . ") "
         . "WHERE ciniki_tenants.id = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQuery');
@@ -64,6 +69,7 @@ function ciniki_tenants_getUserSettings($ciniki) {
     }
     if( isset($rc['tenant']) ) {
         $rsp['name'] = $rc['tenant']['name'];
+        $rsp['flags'] = $rc['tenant']['flags'];
         if( isset($rc['tenant']['css']) ) {
             $rsp['css'] = $rc['tenant']['css'];
         }

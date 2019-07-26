@@ -9,11 +9,15 @@ function ciniki_tenants_intl() {
         this.main.data = {};
         this.main.sections = {
 //          'info':{'label':'', 'type':'htmlcontent'},
-            'locale':{'label':'', 'fields':{
-                'intl-default-locale':{'label':'Locale', 'type':'select', 'options':{}},
+            'locale':{'label':'', 
+                'visible':function() { return M.curTenant.hamMode == null || M.curTenant.hamMode != 'yes' ? 'yes' : 'no'; },
+                'fields':{
+                    'intl-default-locale':{'label':'Locale', 'type':'select', 'options':{}},
                 }},
-            'currency':{'label':'', 'fields':{
-                'intl-default-currency':{'label':'Currency', 'type':'select', 'options':{}},
+            'currency':{'label':'', 
+                'visible':function() { return M.curTenant.hamMode == null || M.curTenant.hamMode != 'yes' ? 'yes' : 'no'; },
+                'fields':{
+                    'intl-default-currency':{'label':'Currency', 'type':'select', 'options':{}},
                 }},
             'timezone':{'label':'', 'fields':{
                 'intl-default-timezone':{'label':'Time Zone', 'type':'select', 'options':{}},

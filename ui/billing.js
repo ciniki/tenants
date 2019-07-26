@@ -132,7 +132,6 @@ function ciniki_tenants_billing() {
         if( cb == null ) { cb = 'M.ciniki_tenants_billing.menu.close();'; }
         var c = this.serializeForm('no');
         if( c != '' ) {
-            console.log(c);
             M.api.postJSONCb('ciniki.tenants.subscriptionCustomerUpdate', {'tnid':this.tnid}, c, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);

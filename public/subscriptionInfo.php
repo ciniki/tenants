@@ -34,6 +34,14 @@ function ciniki_tenants_subscriptionInfo($ciniki) {
         return $rc;
     }   
 
+    //
+    // Check if single tenant mode or blackbox
+    //
+    if( file_exists(dirname($ciniki['config']['ciniki.core']['root_dir']) . '/.blackbox') 
+        || (isset($ciniki['config']['ciniki.core']['single_tenant_mode']) && $ciniki['config']['ciniki.core']['single_tenant_mode'] == 'yes') ){
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.tenants.104', 'msg'=>'Invalid request'));
+    }
+
     ciniki_core_loadMethod($ciniki, 'ciniki', 'users', 'private', 'dateFormat');
     $date_format = ciniki_users_dateFormat($ciniki, 'php');
     ciniki_core_loadMethod($ciniki, 'ciniki', 'users', 'private', 'timezoneOffset');

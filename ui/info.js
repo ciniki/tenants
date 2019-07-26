@@ -11,25 +11,35 @@ function ciniki_tenants_info() {
     this.info.sections = {
         'general':{'label':'General', 'fields':{
             'tenant.name':{'label':'Name', 'type':'text'},
-            'tenant.category':{'label':'Category', 'active':function() { return ((M.userPerms&0x01)==1?'yes':'no');}, 'type':'text', 'livesearch':'yes', 'livesearchempty':'yes'},
-            'tenant.sitename':{'label':'Sitename', 'active':function() { return ((M.userPerms&0x01)==1?'yes':'no');}, 'type':'text', 'livesearch':'yes', 'livesearchempty':'yes'},
-            'tenant.tagline':{'label':'Tagline', 'type':'text'},
+            'tenant.category':{'label':'Category', 'type':'text', 'livesearch':'yes', 'livesearchempty':'yes',
+                'active':function() { return (M.stMode==null&&(M.userPerms&0x01)==1?'yes':'no');}, 
+                },
+            'tenant.sitename':{'label':'Sitename', 'type':'text', 'livesearch':'yes', 'livesearchempty':'yes',
+                'active':function() { return (M.modOn('ciniki.web')&&(M.userPerms&0x01)==1?'yes':'no');}, 
+                },
+            'tenant.tagline':{'label':'Tagline', 'type':'text', 'livesearch':'yes', 'livesearchempty':'yes',
+                'active':function() { return (M.modOn('ciniki.web')?'yes':'no');}, 
+                },
             }},
-        'contact':{'label':'Contact', 'fields':{
-            'contact.person.name':{'label':'Name', 'type':'text'},
-            'contact.phone.number':{'label':'Phone', 'type':'text'},
-            'contact.cell.number':{'label':'Cell', 'type':'text'},
-            'contact.tollfree.number':{'label':'Tollfree', 'type':'text'},
-            'contact.fax.number':{'label':'Fax', 'type':'text'},
-            'contact.email.address':{'label':'Email', 'type':'text'},
+        'contact':{'label':'Contact', 
+            'visible':function() {return M.modOn('ciniki.web') ? 'yes' : 'no'; },
+            'fields':{
+                'contact.person.name':{'label':'Name', 'type':'text'},
+                'contact.phone.number':{'label':'Phone', 'type':'text'},
+                'contact.cell.number':{'label':'Cell', 'type':'text'},
+                'contact.tollfree.number':{'label':'Tollfree', 'type':'text'},
+                'contact.fax.number':{'label':'Fax', 'type':'text'},
+                'contact.email.address':{'label':'Email', 'type':'text'},
             }},
-        'address':{'label':'Address', 'fields':{
-            'contact.address.street1':{'label':'Street', 'type':'text'},
-            'contact.address.street2':{'label':'Street', 'type':'text'},
-            'contact.address.city':{'label':'City', 'type':'text'},
-            'contact.address.province':{'label':'Province', 'type':'text'},
-            'contact.address.postal':{'label':'Postal', 'type':'text'},
-            'contact.address.country':{'label':'Country', 'type':'text'},
+        'address':{'label':'Address', 
+            'visible':function() {return M.modOn('ciniki.web') ? 'yes' : 'no'; },
+            'fields':{
+                'contact.address.street1':{'label':'Street', 'type':'text'},
+                'contact.address.street2':{'label':'Street', 'type':'text'},
+                'contact.address.city':{'label':'City', 'type':'text'},
+                'contact.address.province':{'label':'Province', 'type':'text'},
+                'contact.address.postal':{'label':'Postal', 'type':'text'},
+                'contact.address.country':{'label':'Country', 'type':'text'},
             }}
         };
     this.info.fieldHistoryArgs = function(s, i) {
@@ -57,6 +67,11 @@ function ciniki_tenants_info() {
         this.removeLiveSearch(s, fid);
     };
     this.info.open = function(cb) {
+        if( M.curTenant.hamMode != null && M.curTenant.hamMode == 'yes' ) {
+            this.title = 'Station Information';
+        } else {
+            this.title = 'Tenant Information';
+        }
         M.api.getJSONCb('ciniki.tenants.getDetails', {'tnid':M.curTenantID, 'keys':'tenant,contact'}, function(rsp) {
             if( rsp.stat != 'ok' ) {
                 M.api.err(rsp);

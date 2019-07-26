@@ -243,6 +243,13 @@ function ciniki_tenants_main() {
         }
 
         //
+        // Check if ham radio statio
+        //
+        if( rsp.flags != null && (rsp.flags&0x02) == 0x02 ) {
+            M.curTenant.hamMode = 'yes';
+        }
+
+        //
         // Setup employees
         //
         M.curTenant.employees = {};

@@ -45,23 +45,48 @@ function ciniki_tenants_userList($ciniki) {
     $rc = ciniki_tenants_flags($ciniki, $modules);
     $flags = $rc['flags'];
 
-    $rsp = array('stat'=>'ok', 'permission_groups'=>array(
-        'ciniki.owners'=>array('name'=>'Owners'),
-        ));
-    if( isset($modules['ciniki.tenants']) && ($modules['ciniki.tenants']['flags']&0x01) == 1 ) {
-        $rsp['permission_groups']['ciniki.employees'] = array('name'=>'Employees');
+    //
+    // Check if running in ham mode
+    //
+    $strsql = "SELECT id, name, flags "
+        . "FROM ciniki_tenants "
+        . "WHERE id = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
+        . "";
+    $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.tenants', 'tenant');
+    if( $rc['stat'] != 'ok' ) {
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.tenants.105', 'msg'=>'Unable to load details', 'err'=>$rc['err']));
     }
-    if( isset($modules['ciniki.tenants']) ) {
-        foreach($flags as $flag) {
-            $flag = $flag['flag'];
-            if( isset($flag['group']) 
-                && ($modules['ciniki.tenants']['flags']&pow(2, $flag['bit']-1)) > 0 
-                ) {
-                $rsp['permission_groups'][$flag['group']] = array('name'=>$flag['name']);
+    $tenant = $rc['tenant'];
+
+    if( ($tenant['flags']&0x02) == 0x02 ) {
+        $rsp = array('stat'=>'ok', 'permission_groups'=>array(
+            'ciniki.owners'=>array('name'=>'Operators'),
+            ));
+   
+    } else {
+        $rsp = array('stat'=>'ok', 'permission_groups'=>array(
+            'ciniki.owners'=>array('name'=>'Owners'),
+            ));
+        if( isset($modules['ciniki.tenants']) && ($modules['ciniki.tenants']['flags']&0x01) == 1 ) {
+            $rsp['permission_groups']['ciniki.employees'] = array('name'=>'Employees');
+        }
+        if( isset($modules['ciniki.tenants']) ) {
+            foreach($flags as $flag) {
+                $flag = $flag['flag'];
+                if( isset($flag['group']) 
+                    && ($modules['ciniki.tenants']['flags']&pow(2, $flag['bit']-1)) > 0 
+                    ) {
+                    $rsp['permission_groups'][$flag['group']] = array('name'=>$flag['name']);
+                }
             }
         }
     }
-    if( ($ciniki['session']['user']['perms'] & 0x01) == 0x01 ) {
+
+    if( ($ciniki['session']['user']['perms'] & 0x01) == 0x01
+        && (!isset($ciniki['config']['ciniki.core']['single_tenant_mode']) 
+            || $ciniki['config']['ciniki.core']['single_tenant_mode'] != 'yes'
+            ) 
+        ) {
         $rsp['permission_groups']['ciniki.resellers'] = array('name'=>'Resellers');
     }
 
@@ -91,7 +116,7 @@ function ciniki_tenants_userList($ciniki) {
     // Get the list of users who have access to this tenant
     //
     $strsql = "SELECT ciniki_tenant_users.user_id, "
-        . "ciniki_users.firstname, ciniki_users.lastname, ciniki_users.display_name, ciniki_users.email, "
+        . "ciniki_users.username, ciniki_users.firstname, ciniki_users.lastname, ciniki_users.display_name, ciniki_users.email, "
         . "ciniki_tenant_users.eid, "
         . "CONCAT_WS('.', ciniki_tenant_users.package, ciniki_tenant_users.permission_group) AS permission_group "
         . "FROM ciniki_tenant_users, ciniki_users "
@@ -105,7 +130,7 @@ function ciniki_tenants_userList($ciniki) {
         array('container'=>'groups', 'fname'=>'permission_group', 'name'=>'group', 
             'fields'=>array('permission_group')),
         array('container'=>'users', 'fname'=>'user_id', 'name'=>'user', 
-            'fields'=>array('user_id', 'eid', 'firstname', 'lastname', 'display_name', 'email')),
+            'fields'=>array('user_id', 'eid', 'username', 'firstname', 'lastname', 'display_name', 'email')),
         ));
     if( $rc['stat'] != 'ok' ) {
         return $rc;

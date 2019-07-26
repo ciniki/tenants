@@ -113,6 +113,31 @@ function ciniki_tenants_userUpdateDetails(&$ciniki) {
     }
 
     //
+    // If a sysadmin, allowed to change user details
+    //
+    if( ($ciniki['session']['user']['perms'] & 0x01) == 0x01 ) {
+        $fields = array('firstname', 'lastname', 'display_name', 'username', 'email', 'timeout');
+
+        $strsql = "";
+        foreach($fields as $field) {
+            if( isset($ciniki['request']['args'][$field]) ) {
+                $strsql .= ", $field = '" . ciniki_core_dbQuote($ciniki, $ciniki['request']['args'][$field]) . "' ";
+                ciniki_core_dbAddModuleHistory($ciniki, 'ciniki.users', 'ciniki_user_history', 0, 2, 'ciniki_users', 
+                    $args['user_id'], $field, $ciniki['request']['args'][$field]);
+            }
+        }
+        if( $strsql != '' ) {
+            $strsql = "UPDATE ciniki_users SET last_updated = UTC_TIMESTAMP()" . $strsql 
+                . " WHERE id = '" . ciniki_core_dbQuote($ciniki, $args['user_id']) . "' ";
+            $rc = ciniki_core_dbUpdate($ciniki, $strsql, 'ciniki.users');
+            if( $rc['stat'] != 'ok' ) {
+                ciniki_core_dbTransactionRollback($ciniki, 'ciniki.users');
+                return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.tenants.106', 'msg'=>'Unable to update user', 'err'=>$rc['err']));
+            }
+        }
+    }
+
+    //
     // Allowed tenant user detail keys 
     //
     $allowed_keys = array(

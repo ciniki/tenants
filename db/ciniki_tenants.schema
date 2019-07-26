@@ -16,7 +16,7 @@
 # flags:        The options for the tenant.
 #
 #                   0x01 - Website reseller, this looks for sitenames with reseller_id set.
-#                   0x02 - 
+#                   0x02 - Amateur Radio Station, this enables other features for qruqsp modules
 #                   0x04 - 
 #                   0x08 - 
 #

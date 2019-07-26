@@ -29,15 +29,34 @@ function ciniki_tenants_settings() {
         //
         // Setup the Tenant Settings 
         //
-        this.menu.sections = {
-            '':{'label':'', 'aside':'yes', 'list':{
-                'info':{'label':'Tenant Info', 'fn':'M.startApp(\'ciniki.tenants.info\', null, \'M.ciniki_tenants_settings.menu.show();\');'},
-                'users':{'label':'Owners & Employees', 'fn':'M.startApp(\'ciniki.tenants.users\', null, \'M.ciniki_tenants_settings.menu.show();\');'},
-                'permissions':{'label':'Permissions', 'visible':'no', 'fn':'M.startApp(\'ciniki.tenants.permissions\', null, \'M.ciniki_tenants_settings.menu.show();\');'},
-                'social':{'label':'Social Media', 'fn':'M.startApp(\'ciniki.tenants.social\', null, \'M.ciniki_tenants_settings.menu.show();\');'},
-                'intl':{'label':'Localization', 'fn':'M.startApp(\'ciniki.tenants.intl\', null, \'M.ciniki_tenants_settings.menu.show();\');'},
-                'billing':{'label':'Billing', 'fn':'M.startApp(\'ciniki.tenants.billing\', null, \'M.ciniki_tenants_settings.menu.show();\');'},
-                }}};
+        this.menu.title = 'Tenant Settings';
+        if( M.curTenant.hamMode != null && M.curTenant.hamMode == 'yes' ) {
+            this.menu.title = 'Station Settings';
+            this.menu.sections = {
+                '':{'label':'', 'aside':'yes', 'list':{
+                    'info':{'label':'Station Info', 'fn':'M.startApp(\'ciniki.tenants.info\', null, \'M.ciniki_tenants_settings.menu.show();\');'},
+                    'operators':{'label':'Operators', 'fn':'M.startApp(\'ciniki.tenants.operators\', null, \'M.ciniki_tenants_settings.menu.show();\');'},
+                    'intl':{'label':'Localization', 'fn':'M.startApp(\'ciniki.tenants.intl\', null, \'M.ciniki_tenants_settings.menu.show();\');'},
+                    }}};
+
+        } else if( M.stMode != null && M.stMode == 'yes' ) {
+            this.menu.sections = {
+                '':{'label':'', 'aside':'yes', 'list':{
+                    'info':{'label':'Tenant Info', 'fn':'M.startApp(\'ciniki.tenants.info\', null, \'M.ciniki_tenants_settings.menu.show();\');'},
+                    'users':{'label':'Owners & Employees', 'fn':'M.startApp(\'ciniki.tenants.users\', null, \'M.ciniki_tenants_settings.menu.show();\');'},
+                    'intl':{'label':'Localization', 'fn':'M.startApp(\'ciniki.tenants.intl\', null, \'M.ciniki_tenants_settings.menu.show();\');'},
+                    }}};
+        } else {
+            this.menu.sections = {
+                '':{'label':'', 'aside':'yes', 'list':{
+                    'info':{'label':'Tenant Info', 'fn':'M.startApp(\'ciniki.tenants.info\', null, \'M.ciniki_tenants_settings.menu.show();\');'},
+                    'users':{'label':'Owners & Employees', 'fn':'M.startApp(\'ciniki.tenants.users\', null, \'M.ciniki_tenants_settings.menu.show();\');'},
+                    'permissions':{'label':'Permissions', 'visible':'no', 'fn':'M.startApp(\'ciniki.tenants.permissions\', null, \'M.ciniki_tenants_settings.menu.show();\');'},
+                    'social':{'label':'Social Media', 'fn':'M.startApp(\'ciniki.tenants.social\', null, \'M.ciniki_tenants_settings.menu.show();\');'},
+                    'intl':{'label':'Localization', 'fn':'M.startApp(\'ciniki.tenants.intl\', null, \'M.ciniki_tenants_settings.menu.show();\');'},
+                    'billing':{'label':'Billing', 'fn':'M.startApp(\'ciniki.tenants.billing\', null, \'M.ciniki_tenants_settings.menu.show();\');'},
+                    }}};
+        }
         //
         // FIXME: Move into bugs settings
         //
