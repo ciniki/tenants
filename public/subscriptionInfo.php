@@ -157,6 +157,12 @@ function ciniki_tenants_subscriptionInfo($ciniki) {
     }
 
     $rsp = array('stat'=>'ok', 'subscription'=>$subscription);
+    if( isset($ciniki['config']['ciniki.tenants']['stripe.name']) ) {
+        $rsp['billing_name'] = $ciniki['config']['ciniki.tenants']['stripe.name'];
+    }
+    if( isset($ciniki['config']['ciniki.tenants']['stripe.image']) ) {
+        $rsp['stripe_image'] = $ciniki['config']['ciniki.tenants']['stripe.image'];
+    }
     if( isset($ciniki['config']['ciniki.tenants']['paypal.url']) ) {
         $rsp['paypal'] = array(
             'url'=>$ciniki['config']['ciniki.tenants']['paypal.url'],

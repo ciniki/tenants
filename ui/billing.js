@@ -4,6 +4,8 @@
 function ciniki_tenants_billing() {
 
     this.script = null;
+    
+    this.billing_name = 'Ciniki';
 
     this.statusOptions = {
         '0':'Unknown',
@@ -83,10 +85,13 @@ function ciniki_tenants_billing() {
             }
             var p = M.ciniki_tenants_billing.menu;
             p.data = rsp.subscription;
+            if( rsp.billing_name != null ) {
+                M.ciniki_tenants_billing.billing_name = rsp.billing_name;
+            }
             if( p.data.status == 2 ) {
                 p.stripeHandler = StripeCheckout.configure({
                     key: p.data.stripe_public_key,
-                    image: 'https://s3.amazonaws.com/stripe-uploads/acct_104IPT4DnKptjnBBmerchant-icon-319979-logo.jpg',
+                    image: (rsp.stripe_image != null ? rsp.stripe_image : ''),
                     locale: 'auto',
                     allowRememberMe: false,
                     token: function(token) {
@@ -147,7 +152,7 @@ function ciniki_tenants_billing() {
         var currency = this.formValue('currency');
         var payment_frequency = this.formValue('payment_frequency');
         this.stripeHandler.open({
-            name: 'Ciniki',
+            name: M.ciniki_tenants_billing.billing_name,
             description: this.data.payments,
             zipCode: true,
             currency: currency,
