@@ -313,7 +313,7 @@ function ciniki_tenants_add(&$ciniki) {
     // Check if a plan was specified and then setup for that plan
     //
     if( isset($args['plan_id']) && $args['plan_id'] > 0 ) {
-        $strsql = "SELECT tnid, modules, monthly, trial_days "
+        $strsql = "SELECT tnid, modules, monthly, yearly, trial_days "
             . "FROM ciniki_tenant_plans "
             . "WHERE id = '" . ciniki_core_dbQuote($ciniki, $args['plan_id']) . "' "
             . "AND tnid = '" . ciniki_core_dbQuote($ciniki, $ciniki['config']['ciniki.core']['master_tnid']) . "' "
@@ -374,6 +374,44 @@ function ciniki_tenants_add(&$ciniki) {
                 . ", 'CAD', "
                 . "'" . ciniki_core_dbQuote($ciniki, $plan['monthly']) . "', "
                 . "0, 0, 'paypal', 10, "
+                . "UTC_TIMESTAMP(), UTC_TIMESTAMP())";
+            $rc = ciniki_core_dbInsert($ciniki, $strsql, 'ciniki.tenants');
+            if( $rc['stat'] != 'ok' ) {
+                ciniki_core_dbTransactionRollback($ciniki, 'ciniki.tenants');
+                return $rc;
+            } 
+        }
+        elseif( isset($args['payment_type']) && $args['payment_type'] == 'monthlystripe' ) {
+            $strsql = "INSERT INTO ciniki_tenant_subscriptions (tnid, status, "
+                . "signup_date, trial_start_date, trial_days, currency, "
+                . "monthly, yearly, discount_percent, discount_amount, payment_type, payment_frequency, "
+                . "date_added, last_updated) VALUES ("
+                . "'" . ciniki_core_dbQuote($ciniki, $tnid) . "', "
+                . "2, UTC_TIMESTAMP(), UTC_TIMESTAMP(), "
+                . "' " . ciniki_core_dbQuote($ciniki, $plan['trial_days']) . "' "
+                . ", 'CAD', "
+                . "'" . ciniki_core_dbQuote($ciniki, $plan['monthly']) . "', "
+                . "'" . ciniki_core_dbQuote($ciniki, $plan['yearly']) . "', "
+                . "0, 0, 'stripe', 10, "
+                . "UTC_TIMESTAMP(), UTC_TIMESTAMP())";
+            $rc = ciniki_core_dbInsert($ciniki, $strsql, 'ciniki.tenants');
+            if( $rc['stat'] != 'ok' ) {
+                ciniki_core_dbTransactionRollback($ciniki, 'ciniki.tenants');
+                return $rc;
+            } 
+        }
+        elseif( isset($args['payment_type']) && $args['payment_type'] == 'yearlystripe' ) {
+            $strsql = "INSERT INTO ciniki_tenant_subscriptions (tnid, status, "
+                . "signup_date, trial_start_date, trial_days, currency, "
+                . "monthly, yearly, discount_percent, discount_amount, payment_type, payment_frequency, "
+                . "date_added, last_updated) VALUES ("
+                . "'" . ciniki_core_dbQuote($ciniki, $tnid) . "', "
+                . "2, UTC_TIMESTAMP(), UTC_TIMESTAMP(), "
+                . "' " . ciniki_core_dbQuote($ciniki, $plan['trial_days']) . "' "
+                . ", 'CAD', "
+                . "'" . ciniki_core_dbQuote($ciniki, $plan['monthly']) . "', "
+                . "'" . ciniki_core_dbQuote($ciniki, $plan['yearly']) . "', "
+                . "0, 0, 'stripe', 20, "
                 . "UTC_TIMESTAMP(), UTC_TIMESTAMP())";
             $rc = ciniki_core_dbInsert($ciniki, $strsql, 'ciniki.tenants');
             if( $rc['stat'] != 'ok' ) {
@@ -455,7 +493,7 @@ function ciniki_tenants_add(&$ciniki) {
         $manager_url = $ciniki['config']['ciniki.core']['manage.url'];
         $msg = "<tr><td style='" . $theme['td_body'] . "'>"
             . "<p style='" . $theme['p'] . "'>"
-            . 'Thank you for choosing the Ciniki platform to manage your tenant. '
+            . 'Thank you for choosing the Ciniki platform to manage your business. '
             . "Please save this email for future reference.  We've included some important information and links below."
             . "</p>\n\n<p style='" . $theme['p'] . "'>"
             . "To get started, you can login at <a style='" . $theme['a'] . "' href='$manager_url'>$manager_url</a> with your email address and the password shown below."

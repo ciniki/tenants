@@ -9,7 +9,11 @@ function ciniki_tenants_add() {
     this.add.sections = {
         'general':{'label':'General', 'fields':{
             'plan_id':{'label':'Plan', 'type':'select', 'options':{}},
-            'payment_type':{'label':'Payment', 'type':'select', 'options':{'yearlycheque':'Yearly Cheque', 'monthlypaypal':'Monthly Paypal'}},
+            'payment_type':{'label':'Payment', 'type':'select', 'options':{
+                'monthlystripe':'Monthly Stripe',
+                'yearlystripe':'Yearly Stripe',
+                'yearlycheque':'Yearly Cheque', 
+                }},
             'tenant.name':{'label':'Name', 'type':'text'},
             'tenant.category':{'label':'Category', 'type':'text'},
             'tenant.sitename':{'label':'Sitename', 'type':'text'},
