@@ -143,6 +143,9 @@ function ciniki_tenants_main() {
             if( s == '_tasks' ) { return this.data._tasks; }
             return this.sections[s].list;
         }
+        this.menu.helpSections = function() {
+            return M.ciniki_tenants_main.helpContentSections;
+        }
     }
 
     this.start = function(cb, ap, aG) {
