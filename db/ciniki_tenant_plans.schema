@@ -18,6 +18,7 @@
 #
 # description:  The public description of the plan, what's available with it, etc.
 # monthly:      The monthly cost of the plan.
+# yearly:       The yearly cost of the plan.
 # modules:      The modules that will be enabled when the plan is activated, comma delimited.
 # trial_days:   The length in days the free trial should last.
 # date_added:   The UTC date and time the plan was added to the database.
@@ -31,6 +32,7 @@ create table ciniki_tenant_plans (
     flags tinyint unsigned not null,
     sequence tinyint unsigned not null,
     monthly decimal(10,2) not null,
+    yearly decimal(10,2) not null,
     modules varchar(250) not null,
     trial_days int not null,
     description varchar(6000) not null,
@@ -39,4 +41,4 @@ create table ciniki_tenant_plans (
     primary key(id),
     unique index (uuid),
     index (tnid)
-) ENGINE=InnoDB, COMMENT='v1.02';
+) ENGINE=InnoDB, COMMENT='v1.03';

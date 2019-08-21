@@ -35,7 +35,7 @@ function ciniki_tenants_planList($ciniki) {
     //
     // Query the database for the plan
     //
-    $strsql = "SELECT id, name, monthly, trial_days, "
+    $strsql = "SELECT id, name, monthly, yearly, trial_days, "
         . "IF((flags&0x01)=0x01, 'yes', 'no') AS ispublic "
         . "FROM ciniki_tenant_plans "
         . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "

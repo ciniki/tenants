@@ -156,14 +156,21 @@ function ciniki_tenants_subscriptionInfo($ciniki) {
         $subscription['stripe_public_key'] = $ciniki['config']['ciniki.tenants']['stripe.public'];
     }
 
-    $rsp = array('stat'=>'ok', 'subscription'=>$subscription, 
-        'paypal'=>array(
+    $rsp = array('stat'=>'ok', 'subscription'=>$subscription);
+    if( isset($ciniki['config']['ciniki.tenants']['stripe.name']) ) {
+        $rsp['billing_name'] = $ciniki['config']['ciniki.tenants']['stripe.name'];
+    }
+    if( isset($ciniki['config']['ciniki.tenants']['stripe.image']) ) {
+        $rsp['stripe_image'] = $ciniki['config']['ciniki.tenants']['stripe.image'];
+    }
+    if( isset($ciniki['config']['ciniki.tenants']['paypal.url']) ) {
+        $rsp['paypal'] = array(
             'url'=>$ciniki['config']['ciniki.tenants']['paypal.url'],
             'business'=>$ciniki['config']['ciniki.tenants']['paypal.business'],
             'prefix'=>$ciniki['config']['ciniki.tenants']['paypal.item_name.prefix'],
             'ipn'=>$ciniki['config']['ciniki.tenants']['paypal.ipn']
-            ),
-        );
+            );
+    }
 
     return $rsp;
 }

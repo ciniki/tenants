@@ -36,7 +36,7 @@ function ciniki_tenants_planGet($ciniki) {
     }   
 
     $strsql = "SELECT ciniki_tenant_plans.id, uuid, name, flags, sequence, "
-        . "monthly, modules, trial_days, description, "
+        . "monthly, yearly, modules, trial_days, description, "
         . "date_added, last_updated "
         . "FROM ciniki_tenant_plans "
         . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "

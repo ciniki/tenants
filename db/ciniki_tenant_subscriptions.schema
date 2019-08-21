@@ -32,7 +32,7 @@
 #
 # billing_email:        The email address to use for billing.
 #
-# payment_type:         Must be 'paypal', but others might be allowed in the future.
+# payment_type:         Must be paypal, stripe or cheque, but others might be allowed in the future.
 #
 #                       paypal - payment is processed through paypal
 #                       stripe - payment is processed through stripe
