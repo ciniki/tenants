@@ -5,6 +5,7 @@
 function ciniki_tenants_main() {
     this.tenants = null;
     this.menu = null;
+    this.helpContentSections = {};
 
     this.statusOptions = {
         '10':'Ordered',
@@ -399,6 +400,16 @@ function ciniki_tenants_main() {
             }
             for(var i in r.menu_items) {
                 var item = {'label':r.menu_items[i].label};
+                //
+                // Check if there is help content for the internal help mode
+                //
+                if( r.menu_items[i].helpcontent != null && r.menu_items[i].helpcontent != '' ) {
+                    this.helpContentSections[i] = {
+                        'label':r.menu_items[i].label, 
+                        'type':'htmlcontent', 
+                        'html':r.menu_items[i].helpcontent,
+                        };
+                }
                 if( r.menu_items[i].edit != null ) {
                     var args = '';
                     if( r.menu_items[i].edit.args != null ) {
