@@ -122,6 +122,10 @@ function ciniki_tenants_operators() {
 //            'visible':function() { return M.curTenant.hamMode == null || M.curTenant.hamMode != 'yes' ? 'yes' : 'no'; },
             'buttons':{
                 'save':{'label':'Save', 'fn':'M.ciniki_tenants_operators.edit.save();'},
+                'passwd':{'label':'Set Password', 
+                    'visible':function() { return (M.userPerms&0x01) == 0x01 ? 'yes' : 'no'; },
+                    'fn':'M.ciniki_tenants_operators.edit.setPassword();',
+                    },
 //                'edit':{'label':'Edit', 
 //                    'visible':function() { return (M.userPerms&0x01) == 0x01 ? 'yes' : 'no'; },
 //                    'fn':'M.startApp("ciniki.sysadmin.user",null,"M.ciniki_tenants_operators.edit.open();","mc",{"id":M.ciniki_tenants_operators.edit.user_id});',
@@ -143,11 +147,26 @@ function ciniki_tenants_operators() {
     this.edit.addDropImage = function(iid) {
         this.setFieldValue('employee-bio-image', iid);
         return true;
-    };
+    }
     this.edit.deleteImage = function(fid) {
         this.setFieldValue('employee-bio-image', 0);
         return true;
-    };
+    }
+    this.edit.setPassword = function() {
+        var newpassword = prompt("New password:", "");
+        if( newpassword != null && newpassword != '' ) {
+            M.api.postJSONCb('ciniki.users.setPassword', {'user_id':this.user_id}, 'password='+encodeURIComponent(newpassword),
+                function(rsp) {
+                    if( rsp.stat != 'ok' ) {
+                        M.api.err(rsp);
+                        return false;
+                    }
+                    alert('Password set');
+                });
+        } else {
+            alert('No password specified, nothing changed');
+        }
+    }
     this.edit.open = function(cb, s, uid, mod) {
         if( uid != null ) { this.user_id = uid; }
         if( s != null ) { 
