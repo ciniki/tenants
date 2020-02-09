@@ -25,12 +25,14 @@ function ciniki_tenants_intl() {
             'measurement':{'label':'', 'fields':{
                 'intl-default-distance-units':{'label':'Distance Units', 'type':'select', 'options':{}},
                 }},
-            'temperature':{'label':'', 'fields':{
-                'intl-default-temperature-units':{'label':'Temperature Units', 'type':'select', 'options':{}},
-                }},
-            'windspeed':{'label':'', 'fields':{
-                'intl-default-windspeed-units':{'label':'Windspeed Units', 'type':'select', 'options':{}},
-                }},
+// temp & windspeed not currently used. Can be added back later if needed
+// remove Feb 9, 2020 by andrew
+//            'temperature':{'label':'', 'fields':{
+//                'intl-default-temperature-units':{'label':'Temperature Units', 'type':'select', 'options':{}},
+//                }},
+//            'windspeed':{'label':'', 'fields':{
+//                'intl-default-windspeed-units':{'label':'Windspeed Units', 'type':'select', 'options':{}},
+//                }},
             '_save':{'label':'', 'buttons':{
                 'save':{'label':'Save', 'fn':'M.ciniki_tenants_intl.saveIntl();'},
                 }},
