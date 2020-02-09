@@ -62,6 +62,8 @@ function ciniki_tenants_settingsIntlUpdate($ciniki) {
         'intl-default-currency',
         'intl-default-timezone',
         'intl-default-distance-units',
+        'intl-default-temperature-units',
+        'intl-default-windspeed-units',
         );
     foreach($ciniki['request']['args'] as $arg_name => $arg_value) {
         if( in_array($arg_name, $allowed_keys) ) {

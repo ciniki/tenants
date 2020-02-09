@@ -43,6 +43,8 @@ function ciniki_tenants_settingsIntlGet($ciniki) {
             'intl-default-currency'=>'CAD', 
             'intl-default-timezone'=>'America/Toronto',
             'intl-default-distance-units'=>'km',
+            'intl-default-temperature-units'=>'C',
+            'intl-default-windspeed-units'=>'kph',
             ),
         'locales'=>array(),
         'currencies'=>array(),
@@ -56,7 +58,9 @@ function ciniki_tenants_settingsIntlGet($ciniki) {
             . "'intl-default-locale', "
             . "'intl-default-currency', "
             . "'intl-default-timezone', "
-            . "'intl-default-distance-units' "
+            . "'intl-default-distance-units', "
+            . "'intl-default-temperature-units', "
+            . "'intl-default-windspeed-units' "
             . ") "
         . "";
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.tenants', 'setting');
@@ -108,6 +112,26 @@ function ciniki_tenants_settingsIntlGet($ciniki) {
         return $rc;
     }
     $rsp['distanceunits'] = $rc['units'];
+
+    //
+    // Get the complete list of temperature units
+    //
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'public', 'getTemperatureUnits');
+    $rc = ciniki_core_getTemperatureUnits($ciniki);
+    if( $rc['stat'] != 'ok') {
+        return $rc;
+    }
+    $rsp['temperatureunits'] = $rc['units'];
+
+    //
+    // Get the complete list of windspeed units
+    //
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'public', 'getWindSpeedUnits');
+    $rc = ciniki_core_getWindSpeedUnits($ciniki);
+    if( $rc['stat'] != 'ok') {
+        return $rc;
+    }
+    $rsp['windspeedunits'] = $rc['units'];
 
     return $rsp;
 }
