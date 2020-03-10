@@ -41,14 +41,22 @@ function ciniki_tenants_searchTenants($ciniki) {
     }   
 
     //
-    // Search for categories
+    // Search for tenants
     //
-    $strsql = "SELECT id, name "
+    $strsql = "SELECT ciniki_tenants.id, ciniki_tenants.name "
         . "FROM ciniki_tenants "
-        . "WHERE (name like '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
-            . "OR name like '% " . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
+        . "LEFT JOIN ciniki_tenant_users ON ("
+            . "ciniki_tenants.id = ciniki_tenant_users.tnid "
             . ") "
-        . "AND name <> '' "
+        . "LEFT JOIN ciniki_users ON ("
+            . "ciniki_tenant_users.user_id = ciniki_users.id "
+            . ") "
+        . "WHERE (ciniki_tenants.name like '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
+            . "OR ciniki_tenants.name like '% " . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
+            . "OR ciniki_users.username like '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
+            . "OR ciniki_users.display_name like '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
+            . "OR ciniki_users.display_name like '% " . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
+            . ") "
         . "ORDER BY name COLLATE latin1_general_cs "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
@@ -62,6 +70,7 @@ function ciniki_tenants_searchTenants($ciniki) {
     if( !isset($rc['tenants']) || !is_array($rc['tenants']) ) {
         return array('stat'=>'ok', 'tenants'=>array());
     }
+
     return array('stat'=>'ok', 'tenants'=>$rc['tenants']);
 }
 ?>
