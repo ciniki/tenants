@@ -31,7 +31,9 @@ function ciniki_tenants_hooks_storageDir(&$ciniki, $tnid, $args) {
         $storage_dir = $ciniki['config']['ciniki.core']['storage_dir'] 
             . '/0/0' ;
     }
-    elseif( isset($ciniki['tenant']['settings']['storage_dir']) ) {
+    elseif( isset($ciniki['tenant']['settings']['storage_dir']) 
+        && isset($ciniki['tenant']['id']) && $ciniki['tenant']['id'] == $tnid 
+        ) {
         return array('stat'=>'ok', 'storage_dir'=>$ciniki['tenant']['settings']['storage_dir']);
     }
     elseif( $tnid > 0 ) {
@@ -55,9 +57,12 @@ function ciniki_tenants_hooks_storageDir(&$ciniki, $tnid, $args) {
         // Save settings in $ciniki storage for faster access
         //
         if( !isset($ciniki['tenant']) ) {
-            $ciniki['tenant'] = array('settings'=>array('storage_dir'=>$storage_dir));
+            $ciniki['tenant'] = array('id'=>$tnid, 'settings'=>array('storage_dir'=>$storage_dir));
         } 
         elseif( !isset($ciniki['tenant']['settings']) ) {
+            if( !isset($ciniki['tenant']['id']) ) {
+                $ciniki['tenant']['id'] = $tnid;
+            }
             $ciniki['tenant']['settings'] = array('storage_dir'=>$storage_dir);
         } 
         else {
