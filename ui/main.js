@@ -137,7 +137,10 @@ function ciniki_tenants_main() {
             return '';
         };
         this.menu.rowFn = function(s, i, d) {
-            return 'M.startApp(\'ciniki.atdo.main\',null,\'M.ciniki_tenants_main.showMenu();\',\'mc\',{\'atdo_id\':\'' + d.task.id + '\'});';
+            if( d != null && d.task != null ) {
+                return 'M.startApp(\'ciniki.atdo.main\',null,\'M.ciniki_tenants_main.showMenu();\',\'mc\',{\'atdo_id\':\'' + d.task.id + '\'});';
+            }
+            return '';
         };
         this.menu.sectionData = function(s) {
             if( s == '_tasks' ) { return this.data._tasks; }
