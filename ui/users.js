@@ -174,16 +174,17 @@ function ciniki_tenants_users() {
     }
     this.edit.remove = function(id) {
         if( id != null && id > 0 ) {
-            if( confirm('Are you sure you want to remove this user as an Owner?') ) {
+            M.confirm('Are you sure you want to remove this user as an Owner?',null,function() {
                 M.api.getJSONCb('ciniki.tenants.userRemove', {'tnid':M.curTenantID, 'user_id':id, 
-                    'package':this.package, 'permission_group':this.permission_group}, function(rsp) {
+                    'package':M.ciniki_tenants_users.edit.package, 
+                    'permission_group':M.ciniki_tenants_users.edit.permission_group}, function(rsp) {
                         if( rsp.stat != 'ok' ) {
                             M.api.err(rsp);
                             return false;
                         }
                         M.ciniki_tenants_users.users.open();
                     });
-            }
+            });
         }
         return false;
     }

@@ -224,16 +224,17 @@ function ciniki_tenants_operators() {
     }
     this.edit.remove = function(id) {
         if( id != null && id > 0 ) {
-            if( confirm('Are you sure you want to remove this user as an Operator?') ) {
+            M.confirm('Are you sure you want to remove this user as an Operator?',null,function() {
                 M.api.getJSONCb('ciniki.tenants.userRemove', {'tnid':M.curTenantID, 'user_id':id, 
-                    'package':this.package, 'permission_group':this.permission_group}, function(rsp) {
+                    'package':M.ciniki_tenants_operators.edit.package, 
+                    'permission_group':M.ciniki_tenants_operators.edit.permission_group}, function(rsp) {
                         if( rsp.stat != 'ok' ) {
                             M.api.err(rsp);
                             return false;
                         }
                         M.ciniki_tenants_operators.operators.open();
                     });
-            }
+            });
         }
         return false;
     }

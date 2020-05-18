@@ -160,7 +160,7 @@ function ciniki_tenants_billing() {
             });
     }
     this.menu.cancelSubscription = function() {
-        if( confirm("Are you sure you want to cancel your subscription and close your account?") ) {
+        M.confirm("Are you sure you want to cancel your subscription and close your account?",null,function() {
             M.api.getJSONCb('ciniki.tenants.subscriptionCancel', {'tnid':this.tnid}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
@@ -168,7 +168,7 @@ function ciniki_tenants_billing() {
                 }
                 M.ciniki_tenants_billing.menu.open();
             });
-        }
+        });
     }
     this.menu.addLeftButton('back', 'Back', 'M.ciniki_tenants_billing.menu.save();');
 
