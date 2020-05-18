@@ -161,7 +161,7 @@ function ciniki_tenants_main() {
         //
         var appContainer = M.createContainer('mc', 'ciniki_tenants_main', 'yes');
         if( appContainer == null ) {
-            alert('App Error');
+            M.alert('App Error');
             return false;
         } 
 
@@ -171,7 +171,7 @@ function ciniki_tenants_main() {
         if( args.id != null && args.id != '' ) {
             this.openTenant(cb, args.id);
         } else {
-            alert('Tenant not found');
+            M.alert('Tenant not found');
             return false;
         }
     }
@@ -187,7 +187,7 @@ function ciniki_tenants_main() {
             M.curTenant = {'id':id};
         }
         if( M.curTenantID == null ) {
-            alert('Invalid tenant');
+            M.alert('Invalid tenant');
         }
 
         //

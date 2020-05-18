@@ -87,7 +87,7 @@ function ciniki_tenants_domains() {
         //
         var appContainer = M.createContainer(ap, 'ciniki_tenants_domains', 'yes');
         if( appContainer == null ) {
-            alert('App Error');
+            M.alert('App Error');
             return false;
         } 
 
@@ -170,15 +170,15 @@ function ciniki_tenants_domains() {
     };
 
     this.removeDomain = function() {
-        if( confirm("Are you sure you want to remove the domain '" + this.edit.data.domain + "' ?") ) {
+        M.confirm("Are you sure you want to remove the domain '" + this.edit.data.domain + "' ?",null,function() {
             var rsp = M.api.getJSONCb('ciniki.tenants.domainDelete', 
-                {'tnid':M.curTenantID, 'domain_id':this.edit.domain_id}, function(rsp) {
+                {'tnid':M.curTenantID, 'domain_id':M.ciniki_tenants_domains.edit.domain_id}, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
                         return false;
                     }
                     M.ciniki_tenants_domains.edit.close();
                 });
-        }
+        });
     }
 };

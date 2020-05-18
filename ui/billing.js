@@ -254,7 +254,7 @@ function ciniki_tenants_billing() {
         //
         var appContainer = M.createContainer(ap, 'ciniki_tenants_billing', 'yes');
         if( appContainer == null ) {
-            alert('App Error');
+            M.alert('App Error');
             return false;
         } 
 
@@ -271,7 +271,7 @@ function ciniki_tenants_billing() {
             var head = document.getElementsByTagName('head')[0];
             this.script.onerror = function() {
                 M.stopLoad();
-                alert("Unable to load, please report this bug.");
+                M.alert("Unable to load, please report this bug.");
             };
 
             // Attach handlers for all browsers

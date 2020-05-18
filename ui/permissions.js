@@ -41,7 +41,7 @@ function ciniki_tenants_permissions() {
         //
         var appContainer = M.createContainer(appPrefix, 'ciniki_tenants_permissions', 'yes');
         if( appContainer == null ) {
-            alert('App Error');
+            M.alert('App Error');
             return false;
         } 
 

@@ -171,7 +171,7 @@ function ciniki_tenants_sync() {
         //
         var appContainer = M.createContainer(appPrefix, 'ciniki_tenants_sync', 'yes');
         if( appContainer == null ) {
-            alert('App Error');
+            M.alert('App Error');
             return false;
         } 
 
@@ -273,7 +273,7 @@ function ciniki_tenants_sync() {
                     M.api.err(rsp);
                     return false;
                 }
-                alert('ok');
+                M.alert('ok');
             });
     }
 
@@ -287,7 +287,7 @@ function ciniki_tenants_sync() {
                     M.api.err(rsp);
                     return false;
                 }
-                alert('Systems are ok to sync');
+                M.alert('Systems are ok to sync');
             });
     }
 
@@ -342,7 +342,7 @@ function ciniki_tenants_sync() {
     };
 
     this.deleteSync = function() {
-        if( confirm("Are you sure you want to remove syncronization?  It will be automatically removed from the remote server.") ) {
+        M.confirm("Are you sure you want to remove syncronization?  It will be automatically removed from the remote server.",null,function() {
             var rsp = M.api.getJSONCb('ciniki.tenants.syncDelete', 
                 {'tnid':M.curTenantID, 'sync_id':M.ciniki_tenants_sync.edit.sync_id}, function(rsp) {
                     if( rsp.stat != 'ok' ) {
@@ -351,7 +351,7 @@ function ciniki_tenants_sync() {
                     }
                     M.ciniki_tenants_sync.sync.close();
                 });
-        }
+        });
     };
 
     this.showRowCounts = function(cb) {

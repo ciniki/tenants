@@ -161,10 +161,10 @@ function ciniki_tenants_operators() {
                         M.api.err(rsp);
                         return false;
                     }
-                    alert('Password set');
+                    M.alert('Password set');
                 });
         } else {
-            alert('No password specified, nothing changed');
+            M.alert('No password specified, nothing changed');
         }
     }
     this.edit.open = function(cb, s, uid, mod) {
@@ -290,15 +290,15 @@ function ciniki_tenants_operators() {
     this.add.fieldValue = function(s, i, d) { return ''; }
     this.add.save = function() {
         if( this.formValue('email.username') == '' ) {
-            alert("You must specify a callsign.");
+            M.alert("You must specify a callsign.");
             return false;
         }
         if( this.formValue('email.address') == '' ) {
-            alert("You must specify a email address.");
+            M.alert("You must specify a email address.");
             return false;
         }
         if( this.formValue('user.firstname') == '' ) {
-            alert("You must specify a first name.");
+            M.alert("You must specify a first name.");
             return false;
         }
 
@@ -325,7 +325,7 @@ function ciniki_tenants_operators() {
         //
         var appContainer = M.createContainer(ap, 'ciniki_tenants_operators', 'yes');
         if( appContainer == null ) {
-            alert('App Error');
+            M.alert('App Error');
             return false;
         } 
         

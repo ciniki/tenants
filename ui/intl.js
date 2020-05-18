@@ -52,7 +52,7 @@ function ciniki_tenants_intl() {
         //
         var appContainer = M.createContainer(appPrefix, 'ciniki_tenants_intl', 'yes');
         if( appContainer == null ) {
-            alert('App Error');
+            M.alert('App Error');
             return false;
         } 
         

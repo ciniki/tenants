@@ -43,7 +43,7 @@ function ciniki_tenants_logo() {
         //
         var appContainer = M.createContainer(appPrefix, 'ciniki_tenants_logo', 'yes');
         if( appContainer == null ) {
-            alert('App Error');
+            M.alert('App Error');
             return false;
         } 
 
@@ -81,7 +81,7 @@ function ciniki_tenants_logo() {
     }
 
     this.deleteLogo = function() {
-        if( confirm("Are you sure you want to remove the logo from your tenant?") ) {
+        M.confirm("Are you sure you want to remove the logo from your tenant?",null,function() {
             var rsp = M.api.getJSONCb('ciniki.tenants.logoDelete', 
                 {'tnid':M.curTenantID}, function(rsp) {
                     if( rsp.stat != 'ok' ) {
@@ -90,7 +90,7 @@ function ciniki_tenants_logo() {
                     }
                     M.ciniki_tenants_logo.edit.close();
                 });
-        }
+        });
     }
 }
 

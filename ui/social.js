@@ -62,7 +62,7 @@ function ciniki_tenants_social() {
         //
         var appContainer = M.createContainer(appPrefix, 'ciniki_tenants_social', 'yes');
         if( appContainer == null ) {
-            alert('App Error');
+            M.alert('App Error');
             return false;
         } 
 

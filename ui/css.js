@@ -34,7 +34,7 @@ function ciniki_tenants_css() {
         //
         var appContainer = M.createContainer(appPrefix, 'ciniki_tenants_css', 'yes');
         if( appContainer == null ) {
-            alert('App Error');
+            M.alert('App Error');
             return false;
         } 
         

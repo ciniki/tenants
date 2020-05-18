@@ -199,7 +199,7 @@ function ciniki_tenants_users() {
         //
         var appContainer = M.createContainer(ap, 'ciniki_tenants_users', 'yes');
         if( appContainer == null ) {
-            alert('App Error');
+            M.alert('App Error');
             return false;
         } 
         

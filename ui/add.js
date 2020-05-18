@@ -76,7 +76,7 @@ function ciniki_tenants_add() {
                     return false;
                 }
                 if( rsp.exists == 'yes' ) {
-                    alert('Username taken');
+                    M.alert('Username taken');
                 }
             });
     }
@@ -112,11 +112,11 @@ function ciniki_tenants_add() {
             + this.serializeFormSection('yes', 'address')
             + this.serializeFormSection('yes', 'owner');
         if( document.getElementById(this.panelUID + '_tenant.name').value == '' ) {
-            alert("You must specify a tenant name.");
+            M.alert("You must specify a tenant name.");
             return false;
         }
         if( c == '' ) {
-            alert("No changes to save");
+            M.alert("No changes to save");
             return false;
         } 
         if( c != '' ) {
@@ -154,7 +154,7 @@ function ciniki_tenants_add() {
         //
         var appContainer = M.createContainer(appPrefix, 'ciniki_tenants_add', 'yes');
         if( appContainer == null ) {
-            alert('App Error');
+            M.alert('App Error');
             return false;
         } 
 

@@ -17,7 +17,7 @@ function ciniki_tenants_settings() {
         //
         var appContainer = M.createContainer('mc', 'ciniki_tenants_settings', 'yes');
         if( appContainer == null ) {
-            alert('App Error');
+            M.alert('App Error');
             return false;
         } 
         
@@ -190,7 +190,7 @@ function ciniki_tenants_settings() {
             }
         }
         M.stopLoad();
-        alert('done');
+        M.alert('done');
     }
 
     this.fixintegrity = function(module) {
@@ -234,7 +234,7 @@ function ciniki_tenants_settings() {
                 }
             }
         }
-        alert('done');
+        M.alert('done');
     }
 
     this.fixhistory = function(module) {
@@ -249,7 +249,7 @@ function ciniki_tenants_settings() {
     this.movemembers = function(module) {
         var rsp = M.api.getJSON('ciniki.artclub.memberCopyToCustomers', {'tnid':M.curTenantID});
         if( rsp.stat != 'ok' ) {
-            alert('failed');
+            M.alert('failed');
             M.api.err(rsp);
             return false;
         }
@@ -262,7 +262,7 @@ function ciniki_tenants_settings() {
                 M.api.err(rsp);
                 return false;
             }
-            alert('All images in storage');        
+            M.alert('All images in storage');        
         });
     };
     this.moveproductstorage = function(clear) {
@@ -271,7 +271,7 @@ function ciniki_tenants_settings() {
                 M.api.err(rsp);
                 return false;
             }
-            alert('All files in storage');        
+            M.alert('All files in storage');        
         });
     };
 }

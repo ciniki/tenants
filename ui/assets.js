@@ -40,7 +40,7 @@ function ciniki_tenants_assets() {
         //
         var appContainer = M.createContainer(appPrefix, 'ciniki_tenants_assets', 'yes');
         if( appContainer == null ) {
-            alert('App Error');
+            M.alert('App Error');
             return false;
         } 
 

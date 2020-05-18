@@ -64,7 +64,7 @@ function ciniki_tenants_moduleflags() {
         //
         var appContainer = M.createContainer(appPrefix, 'ciniki_tenants_moduleflags', 'yes');
         if( appContainer == null ) {
-            alert('App Error');
+            M.alert('App Error');
             return false;
         } 
 

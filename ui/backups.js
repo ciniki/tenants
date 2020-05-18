@@ -35,7 +35,7 @@ function ciniki_tenants_backups() {
         //
         var appContainer = M.createContainer(appPrefix, 'ciniki_tenants_backups', 'yes');
         if( appContainer == null ) {
-            alert('App Error');
+            M.alert('App Error');
             return false;
         } 
     

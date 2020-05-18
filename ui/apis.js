@@ -39,7 +39,7 @@ function ciniki_tenants_apis() {
         //
         var appContainer = M.createContainer(appPrefix, 'ciniki_tenants_apis', 'yes');
         if( appContainer == null ) {
-            alert('App Error');
+            M.alert('App Error');
             return false;
         } 
         
@@ -70,7 +70,7 @@ function ciniki_tenants_apis() {
             // Close the main panel so the user must open it again to see new status.
             this.main.close();
         } else {
-            alert('Unknown service');
+            M.alert('Unknown service');
         }
     };
 
@@ -89,7 +89,7 @@ function ciniki_tenants_apis() {
                     p.show();
                 });
         } else {
-            alert('Unknown service');
+            M.alert('Unknown service');
         }
     }
 }

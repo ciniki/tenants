@@ -130,15 +130,15 @@ function ciniki_tenants_plans() {
         }
     }
     this.edit.remove = function() {
-        if( confirm("Are you sure you want to remove the plan '" + this.data.name + "' ?") ) {
-            M.api.getJSONCb('ciniki.tenants.planDelete', {'tnid':M.curTenantID, 'plan_id':this.plan_id}, function(rsp) {
+        M.confirm("Are you sure you want to remove the plan '" + this.data.name + "' ?",null,function() {
+            M.api.getJSONCb('ciniki.tenants.planDelete', {'tnid':M.curTenantID, 'plan_id':M.ciniki_tenants_plans.edit.plan_id}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;
                 }
                 M.ciniki_tenants_plans.edit.close();
             });
-        }
+        });
     }
     this.edit.addButton('save', 'Save', 'M.ciniki_tenants_plans.edit.save();');
     this.edit.addClose('Cancel');
@@ -156,7 +156,7 @@ function ciniki_tenants_plans() {
         //
         var appContainer = M.createContainer(ap, 'ciniki_tenants_plans', 'yes');
         if( appContainer == null ) {
-            alert('App Error');
+            M.alert('App Error');
             return false;
         } 
 
