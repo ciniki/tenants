@@ -79,17 +79,23 @@ function ciniki_tenants_intl() {
                 for(i in rsp.timezones) {
                     p.sections.timezone.fields['intl-default-timezone'].options[rsp.timezones[i].id] = rsp.timezones[i].id;
                 }
-                p.sections.measurement.fields['intl-default-distance-units'].options = {};
-                for(i in rsp.distanceunits) {
-                    p.sections.measurement.fields['intl-default-distance-units'].options[rsp.distanceunits[i].id] = rsp.distanceunits[i].name;
+                if( p.sections.measurement != null ) {
+                    p.sections.measurement.fields['intl-default-distance-units'].options = {};
+                    for(i in rsp.distanceunits) {
+                        p.sections.measurement.fields['intl-default-distance-units'].options[rsp.distanceunits[i].id] = rsp.distanceunits[i].name;
+                    }
                 }
-                p.sections.temperature.fields['intl-default-temperature-units'].options = {};
-                for(i in rsp.temperatureunits) {
-                    p.sections.temperature.fields['intl-default-temperature-units'].options[rsp.temperatureunits[i].id] = rsp.temperatureunits[i].name;
+                if( p.sections.temperature != null ) {
+                    p.sections.temperature.fields['intl-default-temperature-units'].options = {};
+                    for(i in rsp.temperatureunits) {
+                        p.sections.temperature.fields['intl-default-temperature-units'].options[rsp.temperatureunits[i].id] = rsp.temperatureunits[i].name;
+                    }
                 }
-                p.sections.windspeed.fields['intl-default-windspeed-units'].options = {};
-                for(i in rsp.windspeedunits) {
-                    p.sections.windspeed.fields['intl-default-windspeed-units'].options[rsp.windspeedunits[i].id] = rsp.windspeedunits[i].name;
+                if( p.sections.windspeed != null ) {
+                    p.sections.windspeed.fields['intl-default-windspeed-units'].options = {};
+                    for(i in rsp.windspeedunits) {
+                        p.sections.windspeed.fields['intl-default-windspeed-units'].options[rsp.windspeedunits[i].id] = rsp.windspeedunits[i].name;
+                    }
                 }
                 p.refresh();
                 p.show(cb);
