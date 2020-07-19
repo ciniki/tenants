@@ -89,14 +89,14 @@ function ciniki_tenants_main() {
 //            }
             // FIXME: This needs to move into hooks/uiSettings
             if( this.sections[s].id == 'calendars' ) {
-                if( j == 0 && d.appointment.start_ts > 0 ) {
-                    return 'M.startApp(\'ciniki.calendars.main\',null,\'M.ciniki_tenants_main.showMenu();\',\'mc\',{\'date\':\'' + d.appointment.date + '\'});';
+                if( j == 0 && d.start_ts > 0 ) {
+                    return 'M.startApp(\'ciniki.calendars.main\',null,\'M.ciniki_tenants_main.showMenu();\',\'mc\',{\'date\':\'' + d.date + '\'});';
                 }
-                if( d.appointment.module == 'ciniki.wineproduction' ) {
-                    return 'M.startApp(\'ciniki.wineproduction.main\',null,\'M.ciniki_tenants_main.showMenu();\',\'mc\',{\'appointment_id\':\'' + d.appointment.id + '\'});';
+                if( d.module == 'ciniki.wineproduction' ) {
+                    return 'M.startApp(\'ciniki.wineproduction.main\',null,\'M.ciniki_tenants_main.showMenu();\',\'mc\',{\'appointment_id\':\'' + d.id + '\'});';
                 }
-                if( d.appointment.module == 'ciniki.atdo' ) {
-                    return 'M.startApp(\'ciniki.atdo.main\',null,\'M.ciniki_tenants_main.showMenu();\',\'mc\',{\'atdo_id\':\'' + d.appointment.id + '\'});';
+                if( d.module == 'ciniki.atdo' ) {
+                    return 'M.startApp(\'ciniki.atdo.main\',null,\'M.ciniki_tenants_main.showMenu();\',\'mc\',{\'atdo_id\':\'' + d.id + '\'});';
                 }
             }
             return '';
@@ -124,6 +124,26 @@ function ciniki_tenants_main() {
                     case 2: return '<span class="maintext">' + d.task.due_date + '</span><span class="subtext">' + d.task.due_time + '</span>';
                 }
             }
+            if( s == '_timetracker_projects' ) {
+                switch(j) {
+                    case 0: return d.name;
+                    case 1: 
+                        if( d.entry_id > 0 ) {
+                            return 'Stop';
+                        } else {
+                            return 'Start';
+                        }
+                    case 2: return (d.today_length_display != null ? d.today_length_display : '-');
+                }
+            }
+            if( s == '_timetracker_entries' ) {
+                switch(j) {
+                    case 0: return M.multiline(d.project_name, d.notes);
+                    case 1: return M.multiline(d.start_dt_display, (d.end_dt_display != '' ? d.end_dt_display : '-'));
+                    case 2: return d.length_display;
+                }
+            }
+
         };
         this.menu.rowStyle = function(s, i, d) {
             if( s == '_tasks' ) {
@@ -140,12 +160,31 @@ function ciniki_tenants_main() {
             if( d != null && d.task != null ) {
                 return 'M.startApp(\'ciniki.atdo.main\',null,\'M.ciniki_tenants_main.showMenu();\',\'mc\',{\'atdo_id\':\'' + d.task.id + '\'});';
             }
+            if( s == '_timetracker_projects' ) {
+                if( d.entry_id > 0 ) {
+                    return 'M.ciniki_tenants_main.menu.stopEntry(\'' + d.entry_id + '\');';
+                } else {
+                    return 'M.ciniki_tenants_main.menu.startEntry(\'' + d.id + '\');';
+                }
+            }
+            if( s == '_timetracker_entries' ) {
+                return 'M.startApp(\'ciniki.timetracker.tracker\',null,\'M.ciniki_tenants_main.showMenu();\',\'mc\',{\'entry_id\':\'' + d.id + '\'});';
+            }
             return '';
         };
-        this.menu.sectionData = function(s) {
-            if( s == '_tasks' ) { return this.data._tasks; }
-            return this.sections[s].list;
+        this.menu.rowClass = function(s, i, d) {
+            if( s == '_timetracker_projects' ) {
+                if( d.entry_id > 0 ) {
+                    return 'statusgreen';
+                } else {
+                    return 'statusred';
+                }
+            }
         }
+//        this.menu.sectionData = function(s) {
+//            if( s == '_tasks' ) { return this.data._tasks; }
+//            return this.sections[s].list;
+//        }
         this.menu.helpSections = function() {
             return M.ciniki_tenants_main.helpContentSections;
         }
@@ -457,6 +496,10 @@ function ciniki_tenants_main() {
                     if( r.menu_items[i].search.searchtype != null && r.menu_items[i].search.searchtype != '' ) {
                         item.livesearchtype = r.menu_items[i].search.searchtype;
                     }
+                    item['flexcolumn'] = 1;
+                    item['minwidth'] = '10em';
+                    item['width'] = '30em';
+                    item['maxwidth'] = '40em';
                     this.menu.sections[c++] = item;
                     menu_search = 1;
                 }
@@ -477,19 +520,19 @@ function ciniki_tenants_main() {
                     menu_search = 0;
                     join = 0;
                     c++;
-                    this.menu.sections[c] = {'label':'Menu', 'aside':'yes', 'list':{}};
+                    this.menu.sections[c] = {'label':'Menu', 'aside':'yes', 'list':{}, 'flexcolumn':1, 'minwidth':'10em', 'width':'30em', 'maxwidth':'40em'};
                 }
                 else if( join > -1 ) {
                     this.menu.sections[c].list['item_' + i] = item;
                     join++;
 //                    this.menu.sections[c].list['item_' + i] = {'label':r.menu_items[i].label, 'fn':fn};
                 } else {
-                    this.menu.sections[c++] = {'label':'', 'aside':'yes', 'list':{'_':item}};
+                    this.menu.sections[c++] = {'label':'', 'aside':'yes', 'list':{'_':item}, 'flexcolumn':1, 'minwidth':'10em', 'width':'30em', 'maxwidth':'40em'};
 //                    this.menu.sections[c++] = {'label':'', 'list':{'_':{'label':r.menu_items[i].label, 'fn':fn}}};
                 }
                 if( c > 4 && join < 0 ) {
                     join = 0;
-                    this.menu.sections[c] = {'label':' &nbsp; ', 'aside':'yes', 'list':{}};
+                    this.menu.sections[c] = {'label':' &nbsp; ', 'aside':'yes', 'list':{}, 'flexcolumn':1, 'minwidth':'10em', 'width':'30em', 'maxwidth':'40em'};
                 }
             }
         }
@@ -499,7 +542,7 @@ function ciniki_tenants_main() {
         //
         if( r.archived_items != null ) {
             c++;
-            this.menu.sections[c] = {'label':'Archive', 'list':{}};
+            this.menu.sections[c] = {'label':'Archive', 'list':{}, 'flexcolumn':1, 'minwidth':'10em', 'width':'30em', 'maxwidth':'40em'};
             for(var i in r.archived_items) {
                 var item = {'label':r.archived_items[i].label};
                 if( r.archived_items[i].edit != null ) {
@@ -546,16 +589,187 @@ function ciniki_tenants_main() {
             this.menu.size = 'narrow';
         }
         //
-        // Check if there should be a task list displayed
-        // FIXME: Change to background load
+        // Show the calendar, tasks and time tracker on main menu screen
         //
-        if( M.curTenant.modules['ciniki.atdo'] != null && M.curTenant.atdo != null
+        if( M.modFlagOn('ciniki.tenants', 0x0100) 
+            && (perms.owners != null || perms.employees != null || perms.resellers != null || (M.userPerms&0x01) == 1) 
+            ) {
+            this.menu.sections[0].label = 'Menu';
+            this.menu.size = 'flexible';
+            if( M.modOn('ciniki.calendars') ) {
+/*                this.menu.sections['datepicker'] = {'label':'Calendar', 'type':'datepicker', 'livesearch':'yes', 'livesearchtype':'appointments', 
+                    'livesearchempty':'no', 'livesearchcols':2, 'fn':'M.ciniki_calendars_main.showSelectedDayCb',
+                    'flexcolumn':2,
+                    'hint':'Search',
+                    'headerValues':null,
+                    'noData':'No appointments found',
+                    }; */
+                this.menu.sections['schedule'] = {'label':'', 'type':'dayschedule', 'calloffset':0,
+                    'flexcolumn':2,
+                    'flexgrow':5,
+                    'minwidth':'20em',
+                    'width':'20em',
+                    'start':'8:00',
+                    'end':'20:00',
+                    'notimelabel':'All Day',
+                    };
+                this.menu.appointmentTimeFn = function(d, t, ad) {
+                    if( M.curTenant.modules['ciniki.fatt'] != null ) {
+                        return 'M.startApp(\'ciniki.fatt.offerings\',null,\'M.ciniki_tenants_main.showMenu();\',\'mc\',{\'add\':\'courses\',\'date\':\'' + d + '\',\'time\':\'' + t + '\',\'allday\':\'' + ad + '\'});';
+                    } else {
+                        return 'M.startApp(\'ciniki.atdo.main\',null,\'M.ciniki_tenants_main.showMenu();\',\'mc\',{\'add\':\'appointment\',\'date\':\'' + d + '\',\'time\':\'' + t + '\',\'allday\':\'' + ad + '\'});';
+                    }
+                };
+                this.menu.appointmentFn = function(ev) {
+                    if( ev.app != null ) {
+                        return 'M.startApp(\'' + ev.app + '\',null,\'M.ciniki_tenants_main.showMenu();\',\'mc\',{\'appointment_id\':\'' + ev.id + '\'});';
+                    } else {
+                        if( ev.module == 'ciniki.wineproduction' ) {
+                            return 'M.startApp(\'ciniki.wineproduction.main\',null,\'M.ciniki_tenants_main.showMenu();\',\'mc\',{\'appointment_id\':\'' + ev.id + '\'});';
+                        } 
+                        if( ev.module == 'ciniki.atdo' ) {
+                            return 'M.startApp(\'ciniki.atdo.main\',null,\'M.ciniki_tenants_main.showMenu();\',\'mc\',{\'atdo_id\':\'' + ev.id + '\'});';
+                        }
+                        if( ev.module == 'ciniki.fatt' ) {
+                            return 'M.startApp(\'ciniki.fatt.offerings\',null,\'M.ciniki_tenants_main.showMenu();\',\'mc\',{\'appointment_id\':\'' + ev.id + '\'});';
+                        }
+                    }
+                    return '';
+                };
+                var dt = new Date();
+                this.menu.date = dt.getFullYear() + '-' + (dt.getMonth()+1) + '-' + dt.getDate();
+                this.menu.sections.schedule.label = M.months[dt.getMonth()].shortname + ' ' + dt.getDate() + ', ' + dt.getFullYear();
+                M.api.getJSONBgCb('ciniki.calendars.appointments', {'tnid':M.curTenant.id,
+                    'date':this.menu.date
+                    },
+                    function(rsp) {
+                        if( rsp.stat != 'ok' ) {
+                            M.api.err(rsp);
+                            return false;
+                        }
+                        var p = M.ciniki_tenants_main.menu;
+                        p.data.schedule = rsp.appointments;
+                        p.refreshSection('schedule');
+                    });
+            }
+            if( M.modOn('ciniki.atdo') 
+                && M.curTenant.atdo.settings['tasks.ui.mainmenu.category.'+M.userID] != null 
+                && M.curTenant.atdo.settings['tasks.ui.mainmenu.category.'+M.userID] != ''
+                && (perms.owners != null || perms.employees != null || perms.resellers != null || (M.userPerms&0x01) == 1) 
+                ) {
+                this.menu.sections._tasks = {'label':'Tasks', 'visible':'yes', 'type':'simplegrid', 'num_cols':3,
+                    'flexcolumn':3,
+                    'flexgrow':2,
+                    'minwidth':'20em',
+                    'width':'20em',
+                    'headerValues':['', 'Task', 'Due'],
+                    'cellClasses':['multiline aligncenter', 'multiline', 'multiline'],
+                    'noData':'Loading...',
+                    };
+                M.api.getJSONBgCb('ciniki.atdo.tasksList', {'tnid':M.curTenant.id,
+                    'category':M.curTenant.atdo.settings['tasks.ui.mainmenu.category.'+M.userID], 'assigned':'yes', 'status':'open'},
+                    function(rsp) {
+                        if( rsp.stat != 'ok' ) {
+                            M.api.err(rsp);
+                            return false;
+                        }
+                        var p = M.ciniki_tenants_main.menu;
+                        if( rsp.categories[0] != null && rsp.categories[0].category != null ) {
+                            p.data._tasks = rsp.categories[0].category.tasks;
+                            p.sections._tasks.noData = 'No tasks';
+                            p.refreshSection('_tasks');
+                        }
+                    });
+            }
+            if( M.modOn('ciniki.timetracker') ) {
+                this.menu.data._timetracker_projects = {};
+                this.menu.data._timetracker_entries = {};
+                this.menu.sections._timetracker_projects = {'label':'Time Tracker', 'type':'simplegrid', 'num_cols':3,
+                    'minwidth':'20em',
+                    'flexcolumn':4,
+                    'flexgrow':1,
+                    'maxwidth':'30em',
+                    'cellClasses':['', '', 'alignright'],
+                    'footerClasses':['', '', 'alignright'],
+                    'noData':'Loading...',
+                    };
+                this.menu.sections._timetracker_entries = {'label':'Recent', 'type':'simplegrid', 'num_cols':3,
+                    'minwidth':'20em',
+                    'flexcolumn':4,
+                    'flexgrow':1,
+                    'maxwidth':'30em',
+                    'cellClasses':['multiline', 'multiline', ''],
+                    'limit':15,
+                    'noData':'Loading...',
+                    };
+                this.menu.startEntry = function(id) {
+                    M.api.getJSONCb('ciniki.timetracker.tracker', {'tnid':M.curTenantID, 'action':'start', 'project_id':id}, function(rsp) {
+                        if( rsp.stat != 'ok' ) {
+                            M.api.err(rsp);
+                            return false;
+                        }
+                        var p = M.ciniki_tenants_main.menu;
+                        p.data = rsp;
+                        p.sections._timetracker_projects.label = 'Time Tracker - ' + rsp.today_length_display;
+                        p.data._timetracker_projects = rsp.projects;
+                        p.data._timetracker_entries = rsp.entries;
+                        p.refreshSections(['_timetracker_projects', '_timetracker_entries']);
+                        p.refresh();
+                        p.show();
+                    });
+                }
+                this.menu.stopEntry = function(id) {
+                    M.api.getJSONCb('ciniki.timetracker.tracker', {'tnid':M.curTenantID, 'action':'stop', 'entry_id':id}, function(rsp) {
+                        if( rsp.stat != 'ok' ) {
+                            M.api.err(rsp);
+                            return false;
+                        }
+                        var p = M.ciniki_tenants_main.menu;
+                        p.data = rsp;
+                        p.sections._timetracker_projects.label = 'Time Tracker - ' + rsp.today_length_display;
+                        p.data._timetracker_projects = rsp.projects;
+                        p.data._timetracker_entries = rsp.entries;
+                        p.refreshSections(['_timetracker_projects', '_timetracker_entries']);
+                        p.refresh();
+                        p.show();
+                    });
+                }
+                M.api.getJSONBgCb('ciniki.timetracker.tracker', {'tnid':M.curTenant.id},
+                    function(rsp) {
+                        if( rsp.stat != 'ok' ) {
+                            M.api.err(rsp);
+                            return false;
+                        }
+                        var p = M.ciniki_tenants_main.menu;
+                        p.sections._timetracker_projects.label = 'Time Tracker - ' + rsp.today_length_display;
+                        p.data._timetracker_projects = rsp.projects;
+                        p.data._timetracker_entries = rsp.entries;
+                        p.sections._timetracker_projects.noData = 'No projects';
+                        p.sections._timetracker_entries.noData = 'No entries';
+                        p.refreshSections(['_timetracker_projects', '_timetracker_entries']);
+                    });
+            }
+            // Add functions to handle calendar
+            this.menu.scheduleDate = function(s, d) {
+                return this.date;
+            };
+        }
+        //
+        // Check if there should be a task list displayed
+        //
+        else if( M.curTenant.modules['ciniki.atdo'] != null && M.curTenant.atdo != null
             && M.curTenant.atdo.settings['tasks.ui.mainmenu.category.'+M.userID] != null 
             && M.curTenant.atdo.settings['tasks.ui.mainmenu.category.'+M.userID] != ''
             && (perms.owners != null || perms.employees != null || perms.resellers != null || (M.userPerms&0x01) == 1) 
             ) {
             this.menu.data._tasks = {};
-            this.menu.sections._tasks = {'label':'Tasks', 'visible':'hidden', 'type':'simplegrid', 'num_cols':3,
+            this.menu.sections[0].label = 'Menu';
+            this.menu.sections._tasks = {'label':'Tasks', 'visible':'yes', 'type':'simplegrid', 'num_cols':3,
+                'flexcolumn':3,
+                'flexgrow':2,
+                'minwidth':'20em',
+                'maxwidth':'40em',
+                'width':'20em',
                 'headerValues':['', 'Task', 'Due'],
                 'cellClasses':['multiline aligncenter', 'multiline', 'multiline'],
                 'noData':'No tasks found',
@@ -570,7 +784,6 @@ function ciniki_tenants_main() {
                     var p = M.ciniki_tenants_main.menu;
                     if( rsp.categories[0] != null && rsp.categories[0].category != null ) {
                         p.data._tasks = rsp.categories[0].category.tasks;
-                        p.sections._tasks.visible = 'yes';
                         p.refreshSection('_tasks');
                         p.size = 'medium mediumaside';
                         M.gE(p.panelUID).children[0].className = 'medium mediumaside';

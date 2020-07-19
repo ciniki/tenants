@@ -205,19 +205,6 @@ function ciniki_tenants_getUserSettings($ciniki) {
     }
 
     //
-    // Check for tenant reports flag, and a tenant owners
-    //
-    if( ciniki_core_checkModuleFlags($ciniki, 'ciniki.tenants', 0x040000) 
-        && (in_array('owners', $groups) || ($ciniki['session']['user']['perms']&0x01) == 0x01) 
-        ) {
-        $rsp['settings_menu_items'][] = array(
-            'priority'=>1050, 
-            'label'=>'Reports', 
-            'edit'=>array('app'=>'ciniki.tenants.reports'),
-            );
-    } 
-
-    //
     // Sort the menu items based on priority
     //
     usort($rsp['menu_items'], function($a, $b) {
@@ -256,7 +243,6 @@ function ciniki_tenants_getUserSettings($ciniki) {
             unset($rsp['menu_items'][$iid]);
         }
     }
-
 
     return $rsp;
 }

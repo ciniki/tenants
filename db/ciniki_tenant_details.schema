@@ -55,7 +55,6 @@
 #
 # **Note** tenant config information might need it's own table or module.
 #
-#
 # Fields
 # ------
 # tnid:         The id of the tenant the detail is for.
