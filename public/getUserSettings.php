@@ -82,6 +82,7 @@ function ciniki_tenants_getUserSettings($ciniki) {
         . "FROM ciniki_tenant_users, ciniki_users "
         . "WHERE ciniki_tenant_users.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' " 
         . "AND ciniki_tenant_users.user_id = ciniki_users.id "
+        . "AND ciniki_tenant_users.status IN (10, 20) "
         . "ORDER BY display_name "
         . "";
     $rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'ciniki.tenants', 'users', 'user', array('stat'=>'ok', 'users'=>array()));
