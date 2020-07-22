@@ -165,18 +165,18 @@ function ciniki_tenants_main() {
                 if( d.status != 'closed' ) { return 'background: ' + M.curTenant.atdo.settings['tasks.priority.' + d.priority]; }
                 else { return 'background: ' + M.curTenant.atdo.settings['tasks.status.60']; }
             }
-            if( d != null ) {
-                if( d.status != 'closed' ) { return 'background: ' + M.curTenant.atdo.settings['tasks.priority.' + d.priority]; }
-                else { return 'background: ' + M.curTenant.atdo.settings['tasks.status.60']; }
-            }
+//            if( d != null ) {
+//                if( d.status != 'closed' ) { return 'background: ' + M.curTenant.atdo.settings['tasks.priority.' + d.priority]; }
+//                else { return 'background: ' + M.curTenant.atdo.settings['tasks.status.60']; }
+//            }
             return '';
         };
         this.menu.rowFn = function(s, i, d) {
             if( s == '_timetracker_projects' ) {
                 if( d.entry_id > 0 ) {
-                    return 'M.ciniki_tenants_main.menu.stopEntry(\'' + d.entry_id + '\');';
+                    return 'event.stopPropagation(); M.ciniki_tenants_main.menu.stopEntry(\'' + d.entry_id + '\');';
                 } else {
-                    return 'M.ciniki_tenants_main.menu.startEntry(\'' + d.id + '\');';
+                    return 'event.stopPropagation(); M.ciniki_tenants_main.menu.startEntry(\'' + d.id + '\');';
                 }
             }
             if( s == '_timetracker_entries' ) {
@@ -823,8 +823,6 @@ function ciniki_tenants_main() {
                         p.data._timetracker_projects = rsp.projects;
                         p.data._timetracker_entries = rsp.entries;
                         p.refreshSections(['_timetracker_projects', '_timetracker_entries']);
-                        p.refresh();
-                        p.show();
                     });
                 }
                 this.menu.stopEntry = function(id) {
@@ -839,8 +837,6 @@ function ciniki_tenants_main() {
                         p.data._timetracker_projects = rsp.projects;
                         p.data._timetracker_entries = rsp.entries;
                         p.refreshSections(['_timetracker_projects', '_timetracker_entries']);
-                        p.refresh();
-                        p.show();
                     });
                 }
                 M.api.getJSONBgCb('ciniki.timetracker.tracker', {'tnid':M.curTenant.id},
