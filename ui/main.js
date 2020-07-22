@@ -87,8 +87,17 @@ function ciniki_tenants_main() {
 //                }
 //                return '';
 //            }
+/*            if( d.app != null && d.app != '' ) {
+                var args = '{';
+                if( d.args != null ) {
+                    for(var i in d.args) {
+                        args[i] = eval(d.args[i]);
+                    }
+                }
+                return 'M.startApp(\'' + d.app + '\',null,\'M.ciniki_tenants_main.showMenu();\',\'mc\',);';
+            } */
             // FIXME: This needs to move into hooks/uiSettings
-            if( this.sections[s].id == 'calendars' ) {
+            if( this.sections[s].id == 'calendars' || s == 'datepicker' ) {
                 if( j == 0 && d.start_ts > 0 ) {
                     return 'M.startApp(\'ciniki.calendars.main\',null,\'M.ciniki_tenants_main.showMenu();\',\'mc\',{\'date\':\'' + d.date + '\'});';
                 }
@@ -97,6 +106,9 @@ function ciniki_tenants_main() {
                 }
                 if( d.module == 'ciniki.atdo' ) {
                     return 'M.startApp(\'ciniki.atdo.main\',null,\'M.ciniki_tenants_main.showMenu();\',\'mc\',{\'atdo_id\':\'' + d.id + '\'});';
+                }
+                if( d.app == 'ciniki.customers.reminders' ) {
+                    return 'M.startApp(\'ciniki.customers.reminders\',null,\'M.ciniki_tenants_main.showMenu();\',\'mc\',{\'reminder_id\':\'' + d.id + '\',\'source\':\'tenantmenu\'});';
                 }
             }
             return '';
@@ -641,6 +653,7 @@ function ciniki_tenants_main() {
                             + '} '
                             + 't;',
                             ],
+                        'submit':{'method':'ciniki.calendars.main', 'args':{'search':'search_str'}},
                         },
                     'fn':'M.ciniki_tenants_main.menu.showSelectedDayCb',
                     'flexcolumn':2,
