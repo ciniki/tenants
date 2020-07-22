@@ -172,9 +172,6 @@ function ciniki_tenants_main() {
             return '';
         };
         this.menu.rowFn = function(s, i, d) {
-            if( d != null ) {
-                return 'M.startApp(\'ciniki.atdo.main\',null,\'M.ciniki_tenants_main.showMenu();\',\'mc\',{\'atdo_id\':\'' + d.id + '\'});';
-            }
             if( s == '_timetracker_projects' ) {
                 if( d.entry_id > 0 ) {
                     return 'M.ciniki_tenants_main.menu.stopEntry(\'' + d.entry_id + '\');';
@@ -184,6 +181,9 @@ function ciniki_tenants_main() {
             }
             if( s == '_timetracker_entries' ) {
                 return 'M.startApp(\'ciniki.timetracker.tracker\',null,\'M.ciniki_tenants_main.showMenu();\',\'mc\',{\'entry_id\':\'' + d.id + '\'});';
+            }
+            if( d != null ) {
+                return 'M.startApp(\'ciniki.atdo.main\',null,\'M.ciniki_tenants_main.showMenu();\',\'mc\',{\'atdo_id\':\'' + d.id + '\'});';
             }
             return '';
         };
