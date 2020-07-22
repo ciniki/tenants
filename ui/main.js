@@ -600,13 +600,57 @@ function ciniki_tenants_main() {
             this.menu.sections[0].label = 'Menu';
             this.menu.size = 'flexible';
             if( M.modOn('ciniki.calendars') ) {
-/*                this.menu.sections['datepicker'] = {'label':'Calendar', 'type':'datepicker', 'livesearch':'yes', 'livesearchtype':'appointments', 
-                    'livesearchempty':'no', 'livesearchcols':2, 'fn':'M.ciniki_calendars_main.showSelectedDayCb',
+                var dt = new Date();
+                dt.setHours(0);
+                dt.setMinutes(0);
+                dt.setSeconds(0);
+                this.menu.date = dt.getFullYear() + '-' + (dt.getMonth()+1) + '-' + dt.getDate();
+                this.menu.datePickerValue = function(s, d) { return this.date; }
+                this.menu.scheduleDate = function(s, d) { return this.date; }
+                this.menu.sections['datepicker'] = {'label':'Calendar', 'type':'datepicker', 
+                    'livesearch':'yes', 'livesearchtype':'appointments', 
+                    'livesearchempty':'no', 'livesearchcols':2, 
+                    'search':{
+                        'method':'ciniki.calendars.search',
+                        'args':[],
+                        'container':'appointments',
+                        'searchtype':'appointments',
+                        'cols':2,
+                        'cellClasses':['multiline slice_0', 'schedule_appointment'],
+                        'cellColours':[
+                            '\'\'',
+                            'if( d.colour != null && d.colour != \'\' ) { d.colour; } else { \'#77ddff\'; }'
+                            ],
+                        'cellValues':[
+                            'if( d.start_ts == 0 ) { "unscheduled"; } '
+                                + 'else if( d.appointment_allday == "yes" ) { d.start_date.split(/ [-]+:/)[0]; } '
+                                + 'else { \'<span class="maintext">\' + d.start_date.split(/ [0-9]+:/)[0] + \'</span><span class="subtext">\' + d.start_date.split(/, [0-9][0-9][0-9][0-9] /)[1] + \'</span>\'}',
+                            'var t="";'
+                            + 'if( d.secondary_colour != null && d.secondary_colour != \'\') {'
+                                + 't+=\'<span class="colourswatch" style="background-color:\' + d.secondary_colour + \'">\';'
+                                + 'if( d.secondary_colour_text != null && d.secondary_colour_text != \'\' ) {'
+                                    + 't += d.secondary_colour_text; '
+                                + '} else {'
+                                    + 't += \'&nbsp;\'; '
+                                + '} '
+                                + 't += \'</span> \''
+                            + '} '
+                            + 't += d.subject;'
+                            + 'if( d.secondary_text != null && d.secondary_text != \'\' ) {'
+                                + 't += \' <span class="secondary">\' + d.secondary_text + \'</span>\';'
+                            + '} '
+                            + 't;',
+                            ],
+                        },
+                    'fn':'M.ciniki_tenants_main.menu.showSelectedDayCb',
                     'flexcolumn':2,
+                    'flexgrow':5,
+                    'minwidth':'20em',
+                    'width':'20em',
                     'hint':'Search',
                     'headerValues':null,
                     'noData':'No appointments found',
-                    }; */
+                    };
                 this.menu.sections['schedule'] = {'label':'', 'type':'dayschedule', 'calloffset':0,
                     'flexcolumn':2,
                     'flexgrow':5,
@@ -616,6 +660,35 @@ function ciniki_tenants_main() {
                     'end':'20:00',
                     'notimelabel':'All Day',
                     };
+                this.menu.showSelectedDayCb = function(i, scheduleDate) {
+                    this.toggleDatePickerCalendar(scheduleDate, null);
+                    if( scheduleDate != null ) { this.date = scheduleDate; }
+                    M.api.getJSONBgCb('ciniki.calendars.appointments', 
+                        {'tnid':M.curTenantID, 'date':this.date}, function(rsp) {
+                            if( rsp.stat != 'ok' ) {
+                                M.api.err(rsp);
+                                return false;
+                            }
+                            var p = M.ciniki_tenants_main.menu;
+                            p.data.schedule = rsp.appointments;
+                            p.refreshSection('datepicker');
+                            p.refreshSection('schedule');
+                        });
+                }
+                this.menu.appointmentEventText = function(ev) {
+                    var t = '';
+                    if( ev.secondary_colour != null && ev.secondary_colour != '' ) {
+                        t += '<span class="colourswatch" style="background-color:' + ev.secondary_colour + '">';
+                        if( ev.secondary_colour_text != null && ev.secondary_colour_text != '' ) { t += ev.secondary_colour_text; }
+                        else { t += '&nbsp;'; }
+                        t += '</span> '
+                    }
+                    t += ev.subject;
+                    if( ev.secondary_text != null && ev.secondary_text != '' ) {
+                        t += ' <span class="secondary">' + ev.secondary_text + '</span>';
+                    }
+                    return t;
+                }
                 this.menu.appointmentTimeFn = function(d, t, ad) {
                     if( M.curTenant.modules['ciniki.fatt'] != null ) {
                         return 'M.startApp(\'ciniki.fatt.offerings\',null,\'M.ciniki_tenants_main.showMenu();\',\'mc\',{\'add\':\'courses\',\'date\':\'' + d + '\',\'time\':\'' + t + '\',\'allday\':\'' + ad + '\'});';
@@ -639,12 +712,7 @@ function ciniki_tenants_main() {
                     }
                     return '';
                 };
-                var dt = new Date();
-                this.menu.date = dt.getFullYear() + '-' + (dt.getMonth()+1) + '-' + dt.getDate();
-                this.menu.sections.schedule.label = M.months[dt.getMonth()].shortname + ' ' + dt.getDate() + ', ' + dt.getFullYear();
-                M.api.getJSONBgCb('ciniki.calendars.appointments', {'tnid':M.curTenant.id,
-                    'date':this.menu.date
-                    },
+                M.api.getJSONBgCb('ciniki.calendars.appointments', {'tnid':M.curTenant.id, 'date':this.menu.date},
                     function(rsp) {
                         if( rsp.stat != 'ok' ) {
                             M.api.err(rsp);
@@ -676,16 +744,9 @@ function ciniki_tenants_main() {
                     }
                     var p = M.ciniki_tenants_main.menu;
                     p.data._messages = rsp.messages;
-                    console.log(rsp);
                     p.sections._messages.noData = 'No messages';
                     p.refreshSection('_messages');
                 });
-//            }
-//            if( M.modOn('ciniki.atdo') 
-//                && M.curTenant.atdo.settings['tasks.ui.mainmenu.category.'+M.userID] != null 
-//                && M.curTenant.atdo.settings['tasks.ui.mainmenu.category.'+M.userID] != ''
-//                && (perms.owners != null || perms.employees != null || perms.resellers != null || (M.userPerms&0x01) == 1) 
-//                ) {
                 this.menu.sections._tasks = {'label':'Tasks', 'visible':'yes', 'type':'simplegrid', 'num_cols':3,
                     'flexcolumn':3,
                     'flexgrow':2,
@@ -695,14 +756,13 @@ function ciniki_tenants_main() {
                     'headerValues':['', 'Task', 'Due'],
                     'cellClasses':['multiline aligncenter', 'multiline', 'multiline'],
                     'noData':'Loading...',
-                    'moreTxt':'More',
-                    'moreFn':'M.startApp(\'ciniki.atdo.main\',null,\'M.ciniki_tenants_main.showMenu();\',\'mc\',{\'tasks\':\'yes\'});',
+                    'changeTxt':'All Tasks',
+                    'changeFn':'M.startApp(\'ciniki.atdo.main\',null,\'M.ciniki_tenants_main.showMenu();\',\'mc\',{\'tasks\':\'yes\'});',
                     'addTxt':'Add',
                     'addTopFn':'M.startApp(\'ciniki.atdo.main\',null,\'M.ciniki_tenants_main.showMenu();\',\'mc\',{\'add\':\'task\'});',
                     };
                 // Need to query enough rows to get at least 10 including assigned users, average 5 employees assigned.
                 M.api.getJSONBgCb('ciniki.atdo.tasksList', {'tnid':M.curTenant.id,
-                   // 'category':M.curTenant.atdo.settings['tasks.ui.mainmenu.category.'+M.userID], 
                     'assigned':'yes', 'status':'open', 'limit':50},
                     function(rsp) {
                         if( rsp.stat != 'ok' ) {
@@ -710,12 +770,7 @@ function ciniki_tenants_main() {
                             return false;
                         }
                         var p = M.ciniki_tenants_main.menu;
-                        console.log(rsp);
                         p.data._tasks = rsp.tasks;
-//                        p.data._tasks = {};
-//                        if( rsp.categories[0] != null && rsp.categories[0].category != null ) {
-//                            p.data._tasks = rsp.categories[0].category.tasks;
-//                        }
                         p.sections._tasks.noData = 'No tasks';
                         p.refreshSection('_tasks');
                     });
@@ -788,10 +843,6 @@ function ciniki_tenants_main() {
                         p.refreshSections(['_timetracker_projects', '_timetracker_entries']);
                     });
             }
-            // Add functions to handle calendar
-            this.menu.scheduleDate = function(s, d) {
-                return this.date;
-            };
         }
         //
         // Check if there should be a task list displayed
