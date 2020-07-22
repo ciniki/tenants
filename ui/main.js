@@ -736,7 +736,7 @@ function ciniki_tenants_main() {
                         p.refreshSection('schedule');
                     });
             }
-            if( M.modFlagAny('ciniki.atdo', 0x22) == 'yes' ) {
+            if( M.modFlagAny('ciniki.atdo', 0x20) == 'yes' ) {
                 this.menu.sections._messages = {'label':'Messages', 'visible':'yes', 'type':'simplegrid', 'num_cols':1,
                     'flexcolumn':3,
                     'flexgrow':2,
@@ -760,6 +760,8 @@ function ciniki_tenants_main() {
                     p.sections._messages.noData = 'No messages';
                     p.refreshSection('_messages');
                 });
+            }
+            if( M.modFlagAny('ciniki.atdo', 0x02) == 'yes' ) {
                 this.menu.sections._tasks = {'label':'Tasks', 'visible':'yes', 'type':'simplegrid', 'num_cols':3,
                     'flexcolumn':3,
                     'flexgrow':2,
