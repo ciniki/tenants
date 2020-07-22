@@ -736,7 +736,7 @@ function ciniki_tenants_main() {
                         p.refreshSection('schedule');
                     });
             }
-            if( M.modOn('ciniki.atdo') ) {
+            if( M.modFlagAny('ciniki.atdo', 0x22) == 'yes' ) {
                 this.menu.sections._messages = {'label':'Messages', 'visible':'yes', 'type':'simplegrid', 'num_cols':1,
                     'flexcolumn':3,
                     'flexgrow':2,
