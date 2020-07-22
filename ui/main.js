@@ -112,16 +112,19 @@ function ciniki_tenants_main() {
         };
 
         this.menu.cellValue = function(s, i, j, d) {
+            if( s == '_messages' ) {
+                return M.multiline(d.subject + (d.project_name != null && d.project_name != '' ? ' <span class="subdue">[' + d.project_name +      ']</span>' : ''), d.last_followup_user + ' - ' + d.last_followup_age);
+            }
             if( s == '_tasks' ) {
                 switch (j) {
-                    case 0: return '<span class="icon">' + M.curTenant.atdo.priorities[d.task.priority] + '</span>';
+                    case 0: return '<span class="icon">' + M.curTenant.atdo.priorities[d.priority] + '</span>';
                     case 1: 
                         var pname = '';
-                        if( d.task.project_name != null && d.task.project_name != '' ) {
-                            pname = ' <span class="subdue">[' + d.task.project_name + ']</span>';
+                        if( d.project_name != null && d.project_name != '' ) {
+                            pname = ' <span class="subdue">[' + d.project_name + ']</span>';
                         }
-                        return '<span class="maintext">' + d.task.subject + pname + '</span><span class="subtext">' + d.task.assigned_users + '&nbsp;</span>';
-                    case 2: return '<span class="maintext">' + d.task.due_date + '</span><span class="subtext">' + d.task.due_time + '</span>';
+                        return '<span class="maintext">' + d.subject + pname + '</span><span class="subtext">' + d.assigned_users + '&nbsp;</span>';
+                    case 2: return '<span class="maintext">' + d.due_date + '</span><span class="subtext">' + d.due_time + '</span>';
                 }
             }
             if( s == '_timetracker_projects' ) {
@@ -147,18 +150,18 @@ function ciniki_tenants_main() {
         };
         this.menu.rowStyle = function(s, i, d) {
             if( s == '_tasks' ) {
-                if( d.task.status != 'closed' ) { return 'background: ' + M.curTenant.atdo.settings['tasks.priority.' + d.task.priority]; }
+                if( d.status != 'closed' ) { return 'background: ' + M.curTenant.atdo.settings['tasks.priority.' + d.priority]; }
                 else { return 'background: ' + M.curTenant.atdo.settings['tasks.status.60']; }
             }
-            if( d != null && d.task != null ) {
-                if( d.task.status != 'closed' ) { return 'background: ' + M.curTenant.atdo.settings['tasks.priority.' + d.task.priority]; }
+            if( d != null ) {
+                if( d.status != 'closed' ) { return 'background: ' + M.curTenant.atdo.settings['tasks.priority.' + d.priority]; }
                 else { return 'background: ' + M.curTenant.atdo.settings['tasks.status.60']; }
             }
             return '';
         };
         this.menu.rowFn = function(s, i, d) {
-            if( d != null && d.task != null ) {
-                return 'M.startApp(\'ciniki.atdo.main\',null,\'M.ciniki_tenants_main.showMenu();\',\'mc\',{\'atdo_id\':\'' + d.task.id + '\'});';
+            if( d != null ) {
+                return 'M.startApp(\'ciniki.atdo.main\',null,\'M.ciniki_tenants_main.showMenu();\',\'mc\',{\'atdo_id\':\'' + d.id + '\'});';
             }
             if( s == '_timetracker_projects' ) {
                 if( d.entry_id > 0 ) {
@@ -652,33 +655,69 @@ function ciniki_tenants_main() {
                         p.refreshSection('schedule');
                     });
             }
-            if( M.modOn('ciniki.atdo') 
-                && M.curTenant.atdo.settings['tasks.ui.mainmenu.category.'+M.userID] != null 
-                && M.curTenant.atdo.settings['tasks.ui.mainmenu.category.'+M.userID] != ''
-                && (perms.owners != null || perms.employees != null || perms.resellers != null || (M.userPerms&0x01) == 1) 
-                ) {
+            if( M.modOn('ciniki.atdo') ) {
+                this.menu.sections._messages = {'label':'Messages', 'visible':'yes', 'type':'simplegrid', 'num_cols':1,
+                    'flexcolumn':3,
+                    'flexgrow':2,
+                    'limit':10,
+                    'moreTxt':'More',
+                    'moreFn':'M.startApp(\'ciniki.atdo.main\',null,\'M.ciniki_tenants_main.showMenu();\',\'mc\',{\'messages\':\'yes\'});',
+                    'minwidth':'20em',
+                    'width':'20em',
+                    'cellClasses':['multiline'],
+                    'noData':'Loading...',
+                    'addTxt':'Add',
+                    'addTopFn':'M.startApp(\'ciniki.atdo.main\',null,\'M.ciniki_tenants_main.showMenu();\',\'mc\',{\'add\':\'message\'});',
+                    };
+                M.api.getJSONBgCb('ciniki.atdo.messagesList', {'tnid':M.curTenant.id, 'assigned':'yes', 'status':'open'}, function(rsp) {
+                    if( rsp.stat != 'ok' ) {
+                        M.api.err(rsp);
+                        return false;
+                    }
+                    var p = M.ciniki_tenants_main.menu;
+                    p.data._messages = rsp.messages;
+                    console.log(rsp);
+                    p.sections._messages.noData = 'No messages';
+                    p.refreshSection('_messages');
+                });
+//            }
+//            if( M.modOn('ciniki.atdo') 
+//                && M.curTenant.atdo.settings['tasks.ui.mainmenu.category.'+M.userID] != null 
+//                && M.curTenant.atdo.settings['tasks.ui.mainmenu.category.'+M.userID] != ''
+//                && (perms.owners != null || perms.employees != null || perms.resellers != null || (M.userPerms&0x01) == 1) 
+//                ) {
                 this.menu.sections._tasks = {'label':'Tasks', 'visible':'yes', 'type':'simplegrid', 'num_cols':3,
                     'flexcolumn':3,
                     'flexgrow':2,
+                    'limit':10,
                     'minwidth':'20em',
                     'width':'20em',
                     'headerValues':['', 'Task', 'Due'],
                     'cellClasses':['multiline aligncenter', 'multiline', 'multiline'],
                     'noData':'Loading...',
+                    'moreTxt':'More',
+                    'moreFn':'M.startApp(\'ciniki.atdo.main\',null,\'M.ciniki_tenants_main.showMenu();\',\'mc\',{\'tasks\':\'yes\'});',
+                    'addTxt':'Add',
+                    'addTopFn':'M.startApp(\'ciniki.atdo.main\',null,\'M.ciniki_tenants_main.showMenu();\',\'mc\',{\'add\':\'task\'});',
                     };
+                // Need to query enough rows to get at least 10 including assigned users, average 5 employees assigned.
                 M.api.getJSONBgCb('ciniki.atdo.tasksList', {'tnid':M.curTenant.id,
-                    'category':M.curTenant.atdo.settings['tasks.ui.mainmenu.category.'+M.userID], 'assigned':'yes', 'status':'open'},
+                   // 'category':M.curTenant.atdo.settings['tasks.ui.mainmenu.category.'+M.userID], 
+                    'assigned':'yes', 'status':'open', 'limit':50},
                     function(rsp) {
                         if( rsp.stat != 'ok' ) {
                             M.api.err(rsp);
                             return false;
                         }
                         var p = M.ciniki_tenants_main.menu;
-                        if( rsp.categories[0] != null && rsp.categories[0].category != null ) {
-                            p.data._tasks = rsp.categories[0].category.tasks;
-                            p.sections._tasks.noData = 'No tasks';
-                            p.refreshSection('_tasks');
-                        }
+                        console.log(rsp);
+                        p.data._tasks = rsp.tasks;
+//                        p.data._tasks = {};
+//                        if( rsp.categories[0] != null && rsp.categories[0].category != null ) {
+//                            p.data._tasks = rsp.categories[0].category.tasks;
+//                        }
+                        p.sections._tasks.noData = 'No tasks';
+                        p.refreshSection('_tasks');
                     });
             }
             if( M.modOn('ciniki.timetracker') ) {
@@ -703,7 +742,7 @@ function ciniki_tenants_main() {
                     'noData':'Loading...',
                     };
                 this.menu.startEntry = function(id) {
-                    M.api.getJSONCb('ciniki.timetracker.tracker', {'tnid':M.curTenantID, 'action':'start', 'project_id':id}, function(rsp) {
+                    M.api.getJSONBgCb('ciniki.timetracker.tracker', {'tnid':M.curTenantID, 'action':'start', 'project_id':id}, function(rsp) {
                         if( rsp.stat != 'ok' ) {
                             M.api.err(rsp);
                             return false;
@@ -782,12 +821,12 @@ function ciniki_tenants_main() {
                         return false;
                     }
                     var p = M.ciniki_tenants_main.menu;
-                    if( rsp.categories[0] != null && rsp.categories[0].category != null ) {
-                        p.data._tasks = rsp.categories[0].category.tasks;
+                    if( rsp.tasks != null && rsp.tasks.length > 0 ) {
+                        p.data._tasks = rsp.tasks;
                         p.refreshSection('_tasks');
                         p.size = 'medium mediumaside';
                         M.gE(p.panelUID).children[0].className = 'medium mediumaside';
-                    }
+                    } 
                 });
         }
 
