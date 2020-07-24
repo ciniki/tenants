@@ -125,7 +125,7 @@ function ciniki_tenants_main() {
 
         this.menu.cellValue = function(s, i, j, d) {
             if( s == '_messages' ) {
-                return M.multiline((d.viewed == 'no' ? '<b>'+d.subject+'</b>' : d.subject) +
+                return M.multiline((d.viewed == 'no' ? ('<b>'+d.subject+'</b>') : d.subject)
                     + M.subdue(' [', d.project_name, ']'),
                     d.last_followup_user + ' - ' + d.last_followup_age);
             }
