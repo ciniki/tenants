@@ -122,7 +122,6 @@ function ciniki_tenants_main() {
             }
             return '';
         };
-
         this.menu.cellValue = function(s, i, j, d) {
             if( s == '_messages' ) {
                 return M.multiline((d.viewed == 'no' ? ('<b>'+d.subject+'</b>') : d.subject)
@@ -197,6 +196,13 @@ function ciniki_tenants_main() {
                     return 'statusred';
                 }
             }
+            if( s == 'datepicker' ) {
+                var dt = new Date();
+                if( (dt.getFullYear() + '-' + ('00' + (dt.getMonth()+1)).substr(-2) + '-' + dt.getDate()) == this.date ) {
+                    return 'statusgreen';
+                }
+            }
+            return null;
         }
 //        this.menu.sectionData = function(s) {
 //            if( s == '_tasks' ) { return this.data._tasks; }
@@ -614,16 +620,20 @@ function ciniki_tenants_main() {
             this.menu.sections[0].label = 'Menu';
             this.menu.size = 'flexible';
             if( M.modOn('ciniki.calendars') ) {
-                var dt = new Date();
-                dt.setHours(0);
-                dt.setMinutes(0);
-                dt.setSeconds(0);
-                this.menu.date = dt.getFullYear() + '-' + (dt.getMonth()+1) + '-' + dt.getDate();
+                if( this.menu.date == null ) {
+                    var dt = new Date();
+                    dt.setHours(0);
+                    dt.setMinutes(0);
+                    dt.setSeconds(0);
+                    this.menu.date = dt.getFullYear() + '-' + ('00' + (dt.getMonth()+1)).substr(-2) + '-' + dt.getDate();
+                }
                 this.menu.datePickerValue = function(s, d) { return this.date; }
                 this.menu.scheduleDate = function(s, d) { return this.date; }
                 this.menu.sections['datepicker'] = {'label':'Calendar', 'type':'datepicker', 
                     'livesearch':'yes', 'livesearchtype':'appointments', 
                     'livesearchempty':'no', 'livesearchcols':2, 
+                    'addTxt':'Add',
+                    'addTopFn':'M.startApp(\'ciniki.atdo.main\',null,\'M.ciniki_tenants_main.showMenu();\',\'mc\',{\'add\':"appointment"});',
                     'search':{
                         'method':'ciniki.calendars.search',
                         'args':[],
@@ -676,7 +686,10 @@ function ciniki_tenants_main() {
                     'notimelabel':'All Day',
                     };
                 this.menu.showSelectedDayCb = function(i, scheduleDate) {
-                    this.toggleDatePickerCalendar(scheduleDate, null);
+                    var h = M.gE(this.panelUID + '_datepicker_calendar');
+                    if( h != null ) { 
+                        this.toggleDatePickerCalendar(scheduleDate, null);
+                    }
                     if( scheduleDate != null ) { this.date = scheduleDate; }
                     M.api.getJSONBgCb('ciniki.calendars.appointments', 
                         {'tnid':M.curTenantID, 'date':this.date}, function(rsp) {
@@ -727,16 +740,20 @@ function ciniki_tenants_main() {
                     }
                     return '';
                 };
-                M.api.getJSONBgCb('ciniki.calendars.appointments', {'tnid':M.curTenant.id, 'date':this.menu.date},
-                    function(rsp) {
-                        if( rsp.stat != 'ok' ) {
-                            M.api.err(rsp);
-                            return false;
-                        }
-                        var p = M.ciniki_tenants_main.menu;
-                        p.data.schedule = rsp.appointments;
-                        p.refreshSection('schedule');
-                    });
+                this.menu.loadCalendar = function() {
+                    M.api.getJSONBgCb('ciniki.calendars.appointments', {'tnid':M.curTenant.id, 'date':M.ciniki_tenants_main.menu.date},
+                        function(rsp) {
+                            if( rsp.stat != 'ok' ) {
+                                M.api.err(rsp);
+                                return false;
+                            }
+                            var p = M.ciniki_tenants_main.menu;
+                            p.data.schedule = rsp.appointments;
+                            p.refreshSection('schedule');
+                            setTimeout(M.ciniki_tenants_main.menu.loadCalendar, (5*60*1000));
+                        });
+                }
+                this.menu.loadCalendar();
             }
             if( M.modFlagAny('ciniki.atdo', 0x20) == 'yes' ) {
                 this.menu.sections._messages = {'label':'Messages', 'visible':'yes', 'type':'simplegrid', 'num_cols':1,
@@ -752,16 +769,21 @@ function ciniki_tenants_main() {
                     'addTxt':'Add',
                     'addTopFn':'M.startApp(\'ciniki.atdo.main\',null,\'M.ciniki_tenants_main.showMenu();\',\'mc\',{\'add\':\'message\'});',
                     };
-                M.api.getJSONBgCb('ciniki.atdo.messagesList', {'tnid':M.curTenant.id, 'assigned':'yes', 'status':'open'}, function(rsp) {
-                    if( rsp.stat != 'ok' ) {
-                        M.api.err(rsp);
-                        return false;
-                    }
-                    var p = M.ciniki_tenants_main.menu;
-                    p.data._messages = rsp.messages;
-                    p.sections._messages.noData = 'No messages';
-                    p.refreshSection('_messages');
-                });
+                this.menu.loadMessages = function() {
+                    M.api.getJSONBgCb('ciniki.atdo.messagesList', {'tnid':M.curTenant.id, 
+                        'assigned':'yes', 'status':'open'}, function(rsp) {
+                            if( rsp.stat != 'ok' ) {
+                                M.api.err(rsp);
+                                return false;
+                            }
+                            var p = M.ciniki_tenants_main.menu;
+                            p.data._messages = rsp.messages;
+                            p.sections._messages.noData = 'No messages';
+                            p.refreshSection('_messages');
+                            setTimeout(M.ciniki_tenants_main.menu.loadMessages, (5*60*1000));
+                        });
+                }
+                this.menu.loadMessages();
             }
             if( M.modFlagAny('ciniki.atdo', 0x02) == 'yes' ) {
                 this.menu.sections._tasks = {'label':'Tasks', 'visible':'yes', 'type':'simplegrid', 'num_cols':3,
@@ -779,18 +801,22 @@ function ciniki_tenants_main() {
                     'addTopFn':'M.startApp(\'ciniki.atdo.main\',null,\'M.ciniki_tenants_main.showMenu();\',\'mc\',{\'add\':\'task\'});',
                     };
                 // Need to query enough rows to get at least 10 including assigned users, average 5 employees assigned.
-                M.api.getJSONBgCb('ciniki.atdo.tasksList', {'tnid':M.curTenant.id,
-                    'assigned':'yes', 'status':'open', 'limit':50},
-                    function(rsp) {
-                        if( rsp.stat != 'ok' ) {
-                            M.api.err(rsp);
-                            return false;
-                        }
-                        var p = M.ciniki_tenants_main.menu;
-                        p.data._tasks = rsp.tasks;
-                        p.sections._tasks.noData = 'No tasks';
-                        p.refreshSection('_tasks');
-                    });
+                this.menu.loadTasks = function() {
+                    M.api.getJSONBgCb('ciniki.atdo.tasksList', {'tnid':M.curTenant.id,
+                        'assigned':'yes', 'status':'open', 'limit':50},
+                        function(rsp) {
+                            if( rsp.stat != 'ok' ) {
+                                M.api.err(rsp);
+                                return false;
+                            }
+                            var p = M.ciniki_tenants_main.menu;
+                            p.data._tasks = rsp.tasks;
+                            p.sections._tasks.noData = 'No tasks';
+                            p.refreshSection('_tasks');
+                            setTimeout(M.ciniki_tenants_main.menu.loadTasks, (5*60*1000));
+                        });
+                }
+                this.menu.loadTasks();
             }
             if( M.modOn('ciniki.timetracker') ) {
                 this.menu.data._timetracker_projects = {};
@@ -841,20 +867,24 @@ function ciniki_tenants_main() {
                         p.refreshSections(['_timetracker_projects', '_timetracker_entries']);
                     });
                 }
-                M.api.getJSONBgCb('ciniki.timetracker.tracker', {'tnid':M.curTenant.id},
-                    function(rsp) {
-                        if( rsp.stat != 'ok' ) {
-                            M.api.err(rsp);
-                            return false;
-                        }
-                        var p = M.ciniki_tenants_main.menu;
-                        p.sections._timetracker_projects.label = 'Time Tracker - ' + rsp.today_length_display;
-                        p.data._timetracker_projects = rsp.projects;
-                        p.data._timetracker_entries = rsp.entries;
-                        p.sections._timetracker_projects.noData = 'No projects';
-                        p.sections._timetracker_entries.noData = 'No entries';
-                        p.refreshSections(['_timetracker_projects', '_timetracker_entries']);
-                    });
+                this.menu.loadTimeTracker = function() {
+                    M.api.getJSONBgCb('ciniki.timetracker.tracker', {'tnid':M.curTenant.id},
+                        function(rsp) {
+                            if( rsp.stat != 'ok' ) {
+                                M.api.err(rsp);
+                                return false;
+                            }
+                            var p = M.ciniki_tenants_main.menu;
+                            p.sections._timetracker_projects.label = 'Time Tracker - ' + rsp.today_length_display;
+                            p.data._timetracker_projects = rsp.projects;
+                            p.data._timetracker_entries = rsp.entries;
+                            p.sections._timetracker_projects.noData = 'No projects';
+                            p.sections._timetracker_entries.noData = 'No entries';
+                            p.refreshSections(['_timetracker_projects', '_timetracker_entries']);
+                            setTimeout(M.ciniki_tenants_main.menu.loadTimeTracker, (1*60*1000));
+                        });
+                }
+                this.menu.loadTimeTracker();
             }
         }
         //
