@@ -160,26 +160,6 @@ function ciniki_tenants_main() {
                 }
             }
         };
-/*        this.menu.cellFn = function(s, i, j, d) {
-            if( s == '_timetracker_projects' && j == 2 ) {
-                if( d.entry_id > 0 ) {
-                    return 'event.stopPropagation(); M.ciniki_tenants_main.menu.stopEntry(\'' + d.entry_id + '\');';
-                } else {
-                    return 'event.stopPropagation(); M.ciniki_tenants_main.menu.startEntry(\'' + d.id + '\');';
-                }
-            }
-        } */
-        this.menu.rowStyle = function(s, i, d) {
-            if( s == '_tasks' ) {
-                if( d.status != 'closed' ) { return 'background: ' + M.curTenant.atdo.settings['tasks.priority.' + d.priority]; }
-                else { return 'background: ' + M.curTenant.atdo.settings['tasks.status.60']; }
-            }
-//            if( d != null ) {
-//                if( d.status != 'closed' ) { return 'background: ' + M.curTenant.atdo.settings['tasks.priority.' + d.priority]; }
-//                else { return 'background: ' + M.curTenant.atdo.settings['tasks.status.60']; }
-//            }
-            return '';
-        };
         this.menu.rowFn = function(s, i, d) {
             if( s == '_timetracker_entries' ) {
                 return 'M.startApp(\'ciniki.timetracker.tracker\',null,\'M.ciniki_tenants_main.showMenu();\',\'mc\',{\'entry_id\':\'' + d.id + '\'});';
@@ -197,6 +177,13 @@ function ciniki_tenants_main() {
                     return 'statusred aligncenter';
                 }
             }
+            if( s == '_tasks' && d.status != 'closed' ) {
+                switch(d.priority) {
+                    case '10': return 'statusyellow';
+                    case '30': return 'statusorange';
+                    case '50': return 'statusred';
+                }
+            }
             if( s == 'datepicker' ) {
                 var dt = new Date();
                 if( (dt.getFullYear() + '-' + ('00' + (dt.getMonth()+1)).substr(-2) + '-' + dt.getDate()) == this.date ) {
@@ -205,10 +192,6 @@ function ciniki_tenants_main() {
             }
             return null;
         }
-//        this.menu.sectionData = function(s) {
-//            if( s == '_tasks' ) { return this.data._tasks; }
-//            return this.sections[s].list;
-//        }
         this.menu.helpSections = function() {
             return M.ciniki_tenants_main.helpContentSections;
         }
