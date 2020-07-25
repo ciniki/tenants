@@ -143,13 +143,13 @@ function ciniki_tenants_main() {
             if( s == '_timetracker_projects' ) {
                 switch(j) {
                     case 0: return d.name;
-                    case 1: 
+                    case 1: return (d.today_length_display != null ? d.today_length_display : '-');
+                    case 2: 
                         if( d.entry_id > 0 ) {
-                            return 'Stop';
+                            return '<button onclick="M.ciniki_tenants_main.menu.stopEntry(\'' + d.entry_id + '\');">Stop</button>';
                         } else {
-                            return 'Start';
+                            return '<button onclick="M.ciniki_tenants_main.menu.startEntry(\'' + d.id + '\');">Start</button>';
                         }
-                    case 2: return (d.today_length_display != null ? d.today_length_display : '-');
                 }
             }
             if( s == '_timetracker_entries' ) {
@@ -159,8 +159,16 @@ function ciniki_tenants_main() {
                     case 2: return d.length_display;
                 }
             }
-
         };
+/*        this.menu.cellFn = function(s, i, j, d) {
+            if( s == '_timetracker_projects' && j == 2 ) {
+                if( d.entry_id > 0 ) {
+                    return 'event.stopPropagation(); M.ciniki_tenants_main.menu.stopEntry(\'' + d.entry_id + '\');';
+                } else {
+                    return 'event.stopPropagation(); M.ciniki_tenants_main.menu.startEntry(\'' + d.id + '\');';
+                }
+            }
+        } */
         this.menu.rowStyle = function(s, i, d) {
             if( s == '_tasks' ) {
                 if( d.status != 'closed' ) { return 'background: ' + M.curTenant.atdo.settings['tasks.priority.' + d.priority]; }
@@ -173,27 +181,20 @@ function ciniki_tenants_main() {
             return '';
         };
         this.menu.rowFn = function(s, i, d) {
-            if( s == '_timetracker_projects' ) {
-                if( d.entry_id > 0 ) {
-                    return 'event.stopPropagation(); M.ciniki_tenants_main.menu.stopEntry(\'' + d.entry_id + '\');';
-                } else {
-                    return 'event.stopPropagation(); M.ciniki_tenants_main.menu.startEntry(\'' + d.id + '\');';
-                }
-            }
             if( s == '_timetracker_entries' ) {
                 return 'M.startApp(\'ciniki.timetracker.tracker\',null,\'M.ciniki_tenants_main.showMenu();\',\'mc\',{\'entry_id\':\'' + d.id + '\'});';
             }
-            if( d != null ) {
+            if( (s == '_tasks' || s == '_messages') && d != null ) {
                 return 'M.startApp(\'ciniki.atdo.main\',null,\'M.ciniki_tenants_main.showMenu();\',\'mc\',{\'atdo_id\':\'' + d.id + '\'});';
             }
-            return '';
+            return null;
         };
         this.menu.rowClass = function(s, i, d) {
             if( s == '_timetracker_projects' ) {
                 if( d.entry_id > 0 ) {
-                    return 'statusgreen';
+                    return 'statusgreen aligncenter';
                 } else {
-                    return 'statusred';
+                    return 'statusred aligncenter';
                 }
             }
             if( s == 'datepicker' ) {
@@ -740,6 +741,7 @@ function ciniki_tenants_main() {
                     }
                     return '';
                 };
+                this.menu.calTimeout = null;
                 this.menu.loadCalendar = function() {
                     M.api.getJSONBgCb('ciniki.calendars.appointments', {'tnid':M.curTenant.id, 'date':M.ciniki_tenants_main.menu.date},
                         function(rsp) {
@@ -750,10 +752,17 @@ function ciniki_tenants_main() {
                             var p = M.ciniki_tenants_main.menu;
                             p.data.schedule = rsp.appointments;
                             p.refreshSection('schedule');
-                            setTimeout(M.ciniki_tenants_main.menu.loadCalendar, (5*60*1000));
+                            if( p.calTimeout != null ) {
+                                clearTimeout(p.calTimeout);
+                            }
+                            p.calTimeout = setTimeout(M.ciniki_tenants_main.menu.loadCalendar, (5*60*1000));
                         });
                 }
                 this.menu.loadCalendar();
+            } else {
+                if( this.menu.calTimeout != null ) {
+                    clearTimeout(this.menu.calTimeout);
+                }
             }
             if( M.modFlagAny('ciniki.atdo', 0x20) == 'yes' ) {
                 this.menu.sections._messages = {'label':'Messages', 'visible':'yes', 'type':'simplegrid', 'num_cols':1,
@@ -769,6 +778,7 @@ function ciniki_tenants_main() {
                     'addTxt':'Add',
                     'addTopFn':'M.startApp(\'ciniki.atdo.main\',null,\'M.ciniki_tenants_main.showMenu();\',\'mc\',{\'add\':\'message\'});',
                     };
+                this.menu.messagesTimeout = null;
                 this.menu.loadMessages = function() {
                     M.api.getJSONBgCb('ciniki.atdo.messagesList', {'tnid':M.curTenant.id, 
                         'assigned':'yes', 'status':'open'}, function(rsp) {
@@ -780,10 +790,17 @@ function ciniki_tenants_main() {
                             p.data._messages = rsp.messages;
                             p.sections._messages.noData = 'No messages';
                             p.refreshSection('_messages');
-                            setTimeout(M.ciniki_tenants_main.menu.loadMessages, (5*60*1000));
+                            if( p.messagesTimeout != null ) {
+                                clearTimeout(p.messagesTimeout);
+                            }
+                            p.messagesTimeout = setTimeout(M.ciniki_tenants_main.menu.loadMessages, (5*60*1000));
                         });
                 }
                 this.menu.loadMessages();
+            } else {
+                if( this.menu.calTimeout != null ) {
+                    clearTimeout(this.menu.calTimeout);
+                }
             }
             if( M.modFlagAny('ciniki.atdo', 0x02) == 'yes' ) {
                 this.menu.sections._tasks = {'label':'Tasks', 'visible':'yes', 'type':'simplegrid', 'num_cols':3,
@@ -801,6 +818,7 @@ function ciniki_tenants_main() {
                     'addTopFn':'M.startApp(\'ciniki.atdo.main\',null,\'M.ciniki_tenants_main.showMenu();\',\'mc\',{\'add\':\'task\'});',
                     };
                 // Need to query enough rows to get at least 10 including assigned users, average 5 employees assigned.
+                this.menu.tasksTimeout = null;
                 this.menu.loadTasks = function() {
                     M.api.getJSONBgCb('ciniki.atdo.tasksList', {'tnid':M.curTenant.id,
                         'assigned':'yes', 'status':'open', 'limit':50},
@@ -813,10 +831,17 @@ function ciniki_tenants_main() {
                             p.data._tasks = rsp.tasks;
                             p.sections._tasks.noData = 'No tasks';
                             p.refreshSection('_tasks');
-                            setTimeout(M.ciniki_tenants_main.menu.loadTasks, (5*60*1000));
+                            if( p.tasksTimeout != null ) {
+                                clearTimeout(p.tasksTimeout);
+                            }
+                            p.tasksTimeout = setTimeout(M.ciniki_tenants_main.menu.loadTasks, (5*60*1000));
                         });
                 }
                 this.menu.loadTasks();
+            } else {
+                if( this.menu.calTimeout != null ) {
+                    clearTimeout(this.menu.calTimeout);
+                }
             }
             if( M.modOn('ciniki.timetracker') ) {
                 this.menu.data._timetracker_projects = {};
@@ -867,6 +892,7 @@ function ciniki_tenants_main() {
                         p.refreshSections(['_timetracker_projects', '_timetracker_entries']);
                     });
                 }
+                this.menu.timeTrackerTimeout = null;
                 this.menu.loadTimeTracker = function() {
                     M.api.getJSONBgCb('ciniki.timetracker.tracker', {'tnid':M.curTenant.id},
                         function(rsp) {
@@ -881,10 +907,17 @@ function ciniki_tenants_main() {
                             p.sections._timetracker_projects.noData = 'No projects';
                             p.sections._timetracker_entries.noData = 'No entries';
                             p.refreshSections(['_timetracker_projects', '_timetracker_entries']);
-                            setTimeout(M.ciniki_tenants_main.menu.loadTimeTracker, (1*60*1000));
+                            if( p.timeTrackerTimeout != null ) {
+                                clearTimeout(p.timeTrackerTimeout);
+                            }
+                            p.timeTrackerTimeout = setTimeout(M.ciniki_tenants_main.menu.loadTimeTracker, (1*60*1000));
                         });
                 }
                 this.menu.loadTimeTracker();
+            } else {
+                if( this.menu.timeTrackerTimeout != null ) {
+                    clearTimeout(this.menu.timeTrackerTimeout);
+                }
             }
         }
         //
