@@ -65,6 +65,12 @@ function ciniki_tenants_main() {
             }
             return null;
         };
+        this.menu.liveSearchResultRowClass = function(s, f, i, d) {
+            if( this.sections[s].search.rowClass != null ) {
+                return eval(this.sections[s].search.rowClass);
+            }
+            return '';
+        };
         this.menu.liveSearchResultRowStyle = function(s, f, i, d) {
             if( this.sections[s].search.rowStyle != null ) {
                 return eval(this.sections[s].search.rowStyle);
