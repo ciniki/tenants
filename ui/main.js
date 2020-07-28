@@ -601,6 +601,23 @@ function ciniki_tenants_main() {
         } else {
             this.menu.size = 'narrow';
         }
+        
+        //
+        // Clear any timeouts
+        //
+        if( this.menu.calTimeout != null ) {
+            clearTimeout(this.menu.calTimeout);
+        }
+        if( this.menu.messagesTimeout != null ) {
+            clearTimeout(this.menu.tasksTimeout);
+        }
+        if( this.menu.tasksTimeout != null ) {
+            clearTimeout(this.menu.tasksTimeout);
+        }
+        if( this.menu.timeTrackerTimeout != null ) {
+            clearTimeout(this.menu.timeTrackerTimeout);
+        }
+
         //
         // Show the calendar, tasks and time tracker on main menu screen
         //
