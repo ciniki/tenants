@@ -149,13 +149,13 @@ function ciniki_tenants_main() {
             }
             if( s == '_timetracker_projects' ) {
                 switch(j) {
-                    case 0: return d.name;
+                    case 0: return M.multiline(d.name, d.notes);
                     case 1: return (d.today_length_display != null ? d.today_length_display : '-');
                     case 2: 
                         if( d.entry_id > 0 ) {
-                            return '<button onclick="M.ciniki_tenants_main.menu.stopEntry(\'' + d.entry_id + '\');">Stop</button>';
+                            return '<button onclick="event.stopPropagation();M.ciniki_tenants_main.menu.stopEntry(\'' + d.entry_id + '\');">Stop</button>';
                         } else {
-                            return '<button onclick="M.ciniki_tenants_main.menu.startEntry(\'' + d.id + '\');">Start</button>';
+                            return '<button onclick="event.stopPropagation();M.ciniki_tenants_main.menu.startEntry(\'' + d.id + '\');">Start</button>';
                         }
                 }
             }
@@ -817,10 +817,15 @@ function ciniki_tenants_main() {
                     'flexcolumn':3,
                     'flexgrow':1,
                     'maxwidth':'30em',
-                    'cellClasses':['', '', 'alignright'],
+                    'cellClasses':['multiline', '', 'alignright'],
                     'footerClasses':['', '', 'alignright'],
                     'noData':'Loading...',
-                    'rowFn':function(i, d) { return ''; },
+                    'rowFn':function(i, d) { 
+                        if( d.entry_id > 0 ) {
+                            return 'M.startApp(\'ciniki.timetracker.tracker\',null,\'M.ciniki_tenants_main.showMenu();\',\'mc\',{\'entry_id\':\'' + d.entry_id + '\'});';
+                        }
+                        return ''; 
+                        },
                     'changeTxt':'View Logs',
                     'changeFn':'M.startApp(\'ciniki.timetracker.tracker\',null,\'M.ciniki_tenants_main.showMenu();\');',
                     };
