@@ -143,7 +143,8 @@ function ciniki_tenants_main() {
                             pname = ' <span class="subdue">[' + d.project_name + ']</span>';
                         }
                         return '<span class="maintext">' + d.subject + pname + '</span><span class="subtext">' + d.assigned_users + '&nbsp;</span>';
-                    case 2: return '<span class="maintext">' + d.due_date + '</span><span class="subtext">' + d.due_time + '</span>';
+                    case 2: return d.due_date;
+//                    case 2: return '<span class="maintext">' + d.due_date + '</span><span class="subtext">' + d.due_time + '</span>';
                 }
             }
             if( s == '_timetracker_projects' ) {
@@ -808,60 +809,22 @@ function ciniki_tenants_main() {
                     clearTimeout(this.menu.calTimeout);
                 }
             }
-            if( M.modFlagAny('ciniki.atdo', 0x02) == 'yes' ) {
-                this.menu.sections._tasks = {'label':'Tasks', 'visible':'yes', 'type':'simplegrid', 'num_cols':3,
-                    'flexcolumn':3,
-                    'flexgrow':2,
-                    'limit':10,
-                    'minwidth':'20em',
-                    'width':'20em',
-                    'headerValues':['', 'Task', 'Due'],
-                    'cellClasses':['multiline aligncenter', 'multiline', 'multiline'],
-                    'noData':'Loading...',
-                    'changeTxt':'View Tasks',
-                    'changeFn':'M.startApp(\'ciniki.atdo.main\',null,\'M.ciniki_tenants_main.showMenu();\',\'mc\',{\'tasks\':\'yes\'});',
-                    'addTxt':'Add',
-                    'addTopFn':'M.startApp(\'ciniki.atdo.main\',null,\'M.ciniki_tenants_main.showMenu();\',\'mc\',{\'add\':\'task\'});',
-                    };
-                // Need to query enough rows to get at least 10 including assigned users, average 5 employees assigned.
-                this.menu.tasksTimeout = null;
-                this.menu.loadTasks = function() {
-                    M.api.getJSONBgCb('ciniki.atdo.tasksList', {'tnid':M.curTenant.id,
-                        'assigned':'yes', 'status':'open', 'limit':50},
-                        function(rsp) {
-                            if( rsp.stat != 'ok' ) {
-                                M.api.err(rsp);
-                                return false;
-                            }
-                            var p = M.ciniki_tenants_main.menu;
-                            p.data._tasks = rsp.tasks;
-                            p.sections._tasks.noData = 'No tasks';
-                            p.refreshSection('_tasks');
-                            if( p.tasksTimeout != null ) {
-                                clearTimeout(p.tasksTimeout);
-                            }
-                            p.tasksTimeout = setTimeout(M.ciniki_tenants_main.menu.loadTasks, (5*60*1000));
-                        });
-                }
-                this.menu.loadTasks();
-            } else {
-                if( this.menu.calTimeout != null ) {
-                    clearTimeout(this.menu.calTimeout);
-                }
-            }
             if( M.modOn('ciniki.timetracker') ) {
                 this.menu.data._timetracker_projects = {};
                 this.menu.data._timetracker_entries = {};
                 this.menu.sections._timetracker_projects = {'label':'Time Tracker', 'type':'simplegrid', 'num_cols':3,
                     'minwidth':'20em',
-                    'flexcolumn':4,
+                    'flexcolumn':3,
                     'flexgrow':1,
                     'maxwidth':'30em',
                     'cellClasses':['', '', 'alignright'],
                     'footerClasses':['', '', 'alignright'],
                     'noData':'Loading...',
+                    'rowFn':function(i, d) { return ''; },
+                    'changeTxt':'View Logs',
+                    'changeFn':'M.startApp(\'ciniki.timetracker.tracker\',null,\'M.ciniki_tenants_main.showMenu();\');',
                     };
-                this.menu.sections._timetracker_entries = {'label':'Recent', 'type':'simplegrid', 'num_cols':3,
+/*                this.menu.sections._timetracker_entries = {'label':'Recent', 'type':'simplegrid', 'num_cols':3,
                     'minwidth':'20em',
                     'flexcolumn':4,
                     'flexgrow':1,
@@ -869,7 +832,7 @@ function ciniki_tenants_main() {
                     'cellClasses':['multiline', 'multiline', ''],
                     'limit':15,
                     'noData':'Loading...',
-                    };
+                    }; */
                 this.menu.startEntry = function(id) {
                     M.api.getJSONBgCb('ciniki.timetracker.tracker', {'tnid':M.curTenantID, 'action':'start', 'project_id':id}, function(rsp) {
                         if( rsp.stat != 'ok' ) {
@@ -909,9 +872,9 @@ function ciniki_tenants_main() {
                             var p = M.ciniki_tenants_main.menu;
                             p.sections._timetracker_projects.label = 'Time Tracker - ' + rsp.today_length_display;
                             p.data._timetracker_projects = rsp.projects;
-                            p.data._timetracker_entries = rsp.entries;
+//                            p.data._timetracker_entries = rsp.entries;
                             p.sections._timetracker_projects.noData = 'No projects';
-                            p.sections._timetracker_entries.noData = 'No entries';
+//                            p.sections._timetracker_entries.noData = 'No entries';
                             p.refreshSections(['_timetracker_projects', '_timetracker_entries']);
                             if( p.timeTrackerTimeout != null ) {
                                 clearTimeout(p.timeTrackerTimeout);
@@ -923,6 +886,47 @@ function ciniki_tenants_main() {
             } else {
                 if( this.menu.timeTrackerTimeout != null ) {
                     clearTimeout(this.menu.timeTrackerTimeout);
+                }
+            }
+            if( M.modFlagAny('ciniki.atdo', 0x02) == 'yes' ) {
+                this.menu.sections._tasks = {'label':'Tasks', 'visible':'yes', 'type':'simplegrid', 'num_cols':3,
+                    'flexcolumn':3,
+                    'flexgrow':2,
+                    'limit':10,
+                    'minwidth':'20em',
+                    'width':'20em',
+                    'headerValues':['', 'Task', 'Due'],
+                    'cellClasses':['multiline aligncenter', 'multiline', 'multiline'],
+                    'noData':'Loading...',
+                    'changeTxt':'View Tasks',
+                    'changeFn':'M.startApp(\'ciniki.atdo.main\',null,\'M.ciniki_tenants_main.showMenu();\',\'mc\',{\'tasks\':\'yes\'});',
+                    'addTxt':'Add',
+                    'addTopFn':'M.startApp(\'ciniki.atdo.main\',null,\'M.ciniki_tenants_main.showMenu();\',\'mc\',{\'add\':\'task\'});',
+                    };
+                // Need to query enough rows to get at least 10 including assigned users, average 5 employees assigned.
+                this.menu.tasksTimeout = null;
+                this.menu.loadTasks = function() {
+                    M.api.getJSONBgCb('ciniki.atdo.tasksList', {'tnid':M.curTenant.id,
+                        'assigned':'yes', 'status':'open', 'limit':50},
+                        function(rsp) {
+                            if( rsp.stat != 'ok' ) {
+                                M.api.err(rsp);
+                                return false;
+                            }
+                            var p = M.ciniki_tenants_main.menu;
+                            p.data._tasks = rsp.tasks;
+                            p.sections._tasks.noData = 'No tasks';
+                            p.refreshSection('_tasks');
+                            if( p.tasksTimeout != null ) {
+                                clearTimeout(p.tasksTimeout);
+                            }
+                            p.tasksTimeout = setTimeout(M.ciniki_tenants_main.menu.loadTasks, (5*60*1000));
+                        });
+                }
+                this.menu.loadTasks();
+            } else {
+                if( this.menu.calTimeout != null ) {
+                    clearTimeout(this.menu.calTimeout);
                 }
             }
         }
