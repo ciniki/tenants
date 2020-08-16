@@ -29,6 +29,18 @@ function ciniki_tenants_objects($ciniki) {
             ),
         'history_table' => 'ciniki_tenant_history',
         );
+    $objects['uihelp'] = array(
+        'name' => 'UI Help',
+        'sync' => 'yes',
+        'o_name' => 'content',
+        'o_container' => 'content',
+        'table' => 'ciniki_tenant_uihelp',
+        'fields' => array(
+            'helpUID' => array('name'=>'UI Panel'),
+            'content' => array('name'=>'Content'),
+            ),
+        'history_table' => 'ciniki_tenant_history',
+        );
     
     return array('stat'=>'ok', 'objects'=>$objects);
 }

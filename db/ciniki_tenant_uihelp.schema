@@ -1,0 +1,32 @@
+#
+# Description
+# -----------
+# This table stores the custom
+#
+# Fields
+# ------
+# id:                       The ID assigned to the record.
+# uuid:                     The Universal Unique ID.
+# tnid:                     The Tenant ID the record belongs to.
+#
+# helpUID:                  The help ID of the panel.
+# content:                  The help content.
+#
+# date_added:               The UTC date and time the record was added.
+# last_updated:             The UTC date and time the record was last update.
+#
+create table ciniki_tenant_uihelp (
+    id int not null auto_increment,
+    uuid char(36) not null,
+    tnid int not null,
+
+    helpUID varchar(250) not null,
+    content text not null,
+
+    date_added datetime not null,
+    last_updated datetime not null,
+    primary key (id),
+    unique index (uuid),
+    unique index (tnid, helpUID),
+    index sync (tnid, uuid, last_updated)
+) ENGINE='InnoDB', COMMENT='v1.01';
