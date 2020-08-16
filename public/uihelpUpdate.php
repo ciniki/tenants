@@ -69,7 +69,7 @@ function ciniki_tenants_uihelpUpdate(&$ciniki) {
     //
     if( !isset($existing_uihelp) ) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectAdd');
-        $rc = ciniki_core_objectAdd($ciniki, $tnid, 'ciniki.tenants.uihelp', $args, 0x04);
+        $rc = ciniki_core_objectAdd($ciniki, $args['tnid'], 'ciniki.tenants.uihelp', $args, 0x04);
         if( $rc['stat'] != 'ok' ) {
             return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.tenants.109', 'msg'=>'Unable to add the content', 'err'=>$rc['err']));
         }
