@@ -115,6 +115,8 @@ function ciniki_tenants_checkAccess(&$ciniki, $tnid, $method) {
         'ciniki.tenants.reportGet',
         'ciniki.tenants.reportList',
         'ciniki.tenants.reportUpdate',
+        'ciniki.tenants.uihelpGet',
+        'ciniki.tenants.uihelpUpdate',
         );
     if( in_array($method, $owner_methods) && in_array('owners', $groups) ) {
         return array('stat'=>'ok', 'modules'=>$modules, 'groups'=>$groups);
