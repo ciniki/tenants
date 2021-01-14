@@ -884,7 +884,7 @@ function ciniki_tenants_main() {
                             if( p.timeTrackerTimeout != null ) {
                                 clearTimeout(p.timeTrackerTimeout);
                             }
-                            p.timeTrackerTimeout = setTimeout(M.ciniki_tenants_main.menu.loadTimeTracker, (1*60*1000));
+                            p.timeTrackerTimeout = setTimeout(M.ciniki_tenants_main.menu.loadTimeTracker, (5*60*1000));
                         });
                 }
                 this.menu.loadTimeTracker();
