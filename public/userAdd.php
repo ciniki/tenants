@@ -60,6 +60,7 @@ function ciniki_tenants_userAdd(&$ciniki) {
             $flag = $flag['flag'];
             // Make sure permission_group is enabled, and
             if( $flag['group'] = $args['permission_group'] . '.' . $args['package']
+                && isset($modules['ciniki.tenants'])
                 && ($modules['ciniki.tenants']['flags']&pow(2, $flag['bit']-1)) > 0 
                 ) {
                 $found = 'yes';
