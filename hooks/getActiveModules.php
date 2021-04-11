@@ -18,14 +18,16 @@ function ciniki_tenants_hooks_getActiveModules($ciniki, $tnid, $args) {
     //
     // Check if the module is enabled for this tenant, don't really care about the ruleset
     //
-    $strsql = "SELECT ciniki_tenants.status AS tenant_status, "
-        . "ciniki_tenant_modules.status AS module_status, "
-        . "CONCAT_WS('.', ciniki_tenant_modules.package, ciniki_tenant_modules.module) AS module_id, "
-        . "ciniki_tenant_modules.flags, ciniki_tenant_modules.flags>>32 as flags2, ruleset "
-        . "FROM ciniki_tenants, ciniki_tenant_modules "
-        . "WHERE ciniki_tenants.id = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
-        . "AND ciniki_tenants.id = ciniki_tenant_modules.tnid "
-        . "AND ciniki_tenant_modules.status = 1 "
+    $strsql = "SELECT tenants.status AS tenant_status, "
+        . "modules.status AS module_status, "
+        . "CONCAT_WS('.', modules.package, modules.module) AS module_id, "
+        . "modules.flags, "
+        . "modules.flags>>32 as flags2, "
+        . "modules.ruleset "
+        . "FROM ciniki_tenants AS tenants, ciniki_tenant_modules AS modules "
+        . "WHERE tenants.id = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
+        . "AND tenants.id = modules.tnid "
+        . "AND (modules.status = 1 OR modules.status = 2) "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashIDQuery');
     $rc = ciniki_core_dbHashIDQuery($ciniki, $strsql, 'ciniki.tenants', 'modules', 'module_id');
@@ -35,6 +37,7 @@ function ciniki_tenants_hooks_getActiveModules($ciniki, $tnid, $args) {
     if( !isset($rc['modules']) ) {
         return array('stat'=>'ok', 'modules'=>array());
     }
+
     return $rc;
 }
 ?>

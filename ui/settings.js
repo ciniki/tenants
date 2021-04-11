@@ -115,6 +115,9 @@ function ciniki_tenants_settings() {
             if( M.curTenant.modules['ciniki.products'] != null ) {
                 this.menu.sections['advanced']['list']['products'] = {'label':'Products', 'fn':'M.startApp(\'ciniki.products.types\',null,\'M.ciniki_tenants_settings.menu.show();\');'};
             }
+            if( M.curTenant.modules['ciniki.wng'] != null ) {
+                this.menu.sections['advanced']['list']['websites'] = {'label':'Websites', 'fn':'M.startApp(\'ciniki.wng.sites\',null,\'M.ciniki_tenants_settings.menu.show();\');'};
+            }
             this.menu.size = 'narrow narrowaside';
 
             //
