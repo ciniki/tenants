@@ -18,6 +18,8 @@
 #
 #                   The domain must be unique within the database, because it is used to lookup a tenant.
 #
+# parent_id:        The primary domain which this domain should redirect to.
+#
 # flags:            
 #                   0x01 - The domain is a fully qualified domain.
 #                   0x02 - Designate this site as primary *future*
@@ -39,6 +41,7 @@
 # root_id:          The parent root domain if not this one.  If this
 #                   record is a sub domain, then this points to the
 #                   root domain if hosted here. (not used currently)
+#                   **note** This is different than parent_id which is used for aliasing.
 #
 # expiry_date:      The date the domain is set to expire, used for tracking renewals.
 #
@@ -51,6 +54,7 @@ create table ciniki_tenant_domains (
     id int not null auto_increment,
     tnid int not null,
     domain varchar(255) not null,
+    parent_id int not null,
     flags tinyint unsigned not null,
     status tinyint unsigned not null,
     root_id int not null,
@@ -61,4 +65,4 @@ create table ciniki_tenant_domains (
     primary key (id),
     index(tnid),
     unique index (domain)
-) ENGINE=InnoDB, COMMENT='v1.03';
+) ENGINE=InnoDB, COMMENT='v1.04';

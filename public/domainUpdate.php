@@ -21,10 +21,11 @@ function ciniki_tenants_domainUpdate($ciniki) {
         'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'domain_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Domain ID'), 
         'domain'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Domain'), 
+        'parent_id'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Parent'), 
         'flags'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Flags'), 
         'status'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Status'),
         'expiry_date'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'date', 'name'=>'Expiry Date'),
-        'managed_by'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'', 'name'=>'Managed'),
+        'managed_by'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Managed'),
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
@@ -55,6 +56,16 @@ function ciniki_tenants_domainUpdate($ciniki) {
         return $rc;
     }   
 
+    //
+    // Update the domain
+    //
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectUpdate');
+    $rc = ciniki_core_objectUpdate($ciniki, $args['tnid'], 'ciniki.tenants.domain', $args['domain_id'], $args, 0x04);
+    if( $rc['stat'] != 'ok' ) {
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.tenants.112', 'msg'=>'Unable to update the domain', 'err'=>$rc['err']));
+    }
+    
+/*
     //
     // Start building the update SQL
     //
@@ -88,7 +99,7 @@ function ciniki_tenants_domainUpdate($ciniki) {
         ciniki_core_dbTransactionRollback($ciniki, 'ciniki.tenants');
         return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.tenants.43', 'msg'=>'Unable to update domain'));
     }
-
+*/
     //
     // Commit the database changes
     //

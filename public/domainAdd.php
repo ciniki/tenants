@@ -19,6 +19,7 @@ function ciniki_tenants_domainAdd($ciniki) {
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
         'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'domain'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Domain'), 
+        'parent_id'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Parent'), 
         'flags'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'0', 'name'=>'Flags'), 
         'status'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'1', 'name'=>'Status'),
         'expiry_date'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'', 'type'=>'date', 'name'=>'Expiry Date'),

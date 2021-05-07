@@ -1,0 +1,5 @@
+#
+# Add the field to for aliasing
+#
+ALTER TABLE ciniki_tenant_domains ADD COLUMN parent_id int not null AFTER domain;
+ALTER TABLE ciniki_tenant_domains COMMENT='v1.04';

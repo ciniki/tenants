@@ -21,9 +21,10 @@ function ciniki_tenants_objects($ciniki) {
         'table' => 'ciniki_tenant_domains',
         'fields' => array(
             'domain' => array('name'=>'Name'),
+            'parent_id' => array('name'=>'Primary', 'ref'=>'ciniki.tenants.domain', 'default'=>'0'),
             'flags' => array('name'=>'Options', 'default'=>'0'),
             'status' => array('name'=>'Status', 'default'=>'1'),
-            'root_id,' => array('name'=>'', 'default'=>''),
+            'root_id' => array('name'=>'', 'default'=>''),
             'expiry_date' => array('name'=>'Expiration Date', 'default'=>''),
             'managed_by' => array('name'=>'Managed By', 'default'=>''),
             ),
