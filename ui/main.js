@@ -279,6 +279,7 @@ function ciniki_tenants_main() {
         // Get the list of owners and employees for the tenant
         //
         M.api.getJSONCb('ciniki.tenants.getUserSettings', {'tnid':M.curTenantID}, function(rsp) {
+            // If user doesn't have permission, bump back to main menu
             if( rsp.stat != 'ok' && rsp.err != null && rsp.err.code == 'ciniki.tenants.14' ) {
                 localStorage.removeItem("lastTenantID");
                 M.curTenantID = null;
