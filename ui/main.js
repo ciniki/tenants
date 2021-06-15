@@ -279,6 +279,13 @@ function ciniki_tenants_main() {
         // Get the list of owners and employees for the tenant
         //
         M.api.getJSONCb('ciniki.tenants.getUserSettings', {'tnid':M.curTenantID}, function(rsp) {
+            if( rsp.stat != 'ok' && rsp.err != null && rsp.err.code == 'ciniki.tenants.14' ) {
+                localStorage.removeItem("lastTenantID");
+                M.curTenantID = null;
+                delete M.curTenant;
+                M.startApp(M.startMenu);
+                return false;
+            }
             if( rsp.stat != 'ok' ) {
                 M.api.err(rsp);
                 return false;
