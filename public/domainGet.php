@@ -45,7 +45,7 @@ function ciniki_tenants_domainGet($ciniki) {
             'domain' => '',
             'flags' => 0,
             'status' => 1,
-            'expiry_date' => $dt->format('b j, Y'),
+            'expiry_date' => $dt->format('M j, Y'),
             'managed_by' => 'EasyDNS',
             );
 
