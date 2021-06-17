@@ -131,7 +131,7 @@ function ciniki_tenants_settings() {
                     'assets':{'label':'Image Assets', 'fn':'M.startApp(\'ciniki.tenants.assets\', null, \'M.ciniki_tenants_settings.menu.show();\');'},
 //                    'fixhistory':{'label':'Fix History', 'fn':'M.ciniki_tenants_settings.fixallhistory();'},
                     'imagecropper':{'label':'Image Cropper', 'fn':'M.startApp(\'ciniki.images.cropper\', null, \'M.ciniki_tenants_settings.menu.show();\');'},
-//                    'ifbupgrade':{'label':'IFB Upgrade', 'fn':'M.startApp(\'ciniki.customers.ifbupgrade\', null, \'M.ciniki_tenants_settings.menu.show();\');'},
+                    'ifbupgrade':{'label':'IFB Upgrade', 'fn':'M.startApp(\'ciniki.customers.ifbupgrade\', null, \'M.ciniki_tenants_settings.menu.show();\');'},
 //                    'checkimages':{'label':'Check Image Storage', 'fn':'M.ciniki_tenants_settings.checkimagestorage("no");'},
 //                    'checkimagesclean':{'label':'Check Image Storage & Clean DB', 'fn':'M.ciniki_tenants_settings.checkimagestorage("yes");'},
 //                    'moveproductfiles':{'label':'Check Product Files', 'fn':'M.ciniki_tenants_settings.moveproductstorage("no");'},
