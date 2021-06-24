@@ -178,6 +178,9 @@ function ciniki_tenants_getUserSettings($ciniki) {
                     }
                 }
                 if( isset($rc['archived_items']) ) {
+                    if( !isset($rsp['archived_items']) ) {
+                        $rsp['archived_items'] = array();
+                    }
                     $rsp['archived_items'] = array_merge($rsp['archived_items'], $rc['archived_items']);
                 }
                 if( isset($rc['settings_menu_items']) ) {
