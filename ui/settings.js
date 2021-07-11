@@ -134,6 +134,8 @@ function ciniki_tenants_settings() {
                     'ifbupgrade':{'label':'IFB Upgrade', 'fn':'M.startApp(\'ciniki.customers.ifbupgrade\', null, \'M.ciniki_tenants_settings.menu.show();\');'},
 //                    'checkimages':{'label':'Check Image Storage', 'fn':'M.ciniki_tenants_settings.checkimagestorage("no");'},
 //                    'checkimagesclean':{'label':'Check Image Storage & Clean DB', 'fn':'M.ciniki_tenants_settings.checkimagestorage("yes");'},
+                    'movecoursefiles':{'label':'Check Course Files', 'fn':'M.ciniki_tenants_settings.movecoursestorage("no");'},
+                    'movecoursefilesclean':{'label':'Check Course Files & Clean DB', 'fn':'M.ciniki_tenants_settings.movecoursestorage("yes");'},
 //                    'moveproductfiles':{'label':'Check Product Files', 'fn':'M.ciniki_tenants_settings.moveproductstorage("no");'},
 //                    'moveproductfilesclean':{'label':'Check Product Files & Clean DB', 'fn':'M.ciniki_tenants_settings.moveproductstorage("yes");'},
     //              'fixhistory':{'label':'Fix History', 'fn':'M.startApp(\'ciniki.tenants.fixhistory\', null, \'M.ciniki_tenants_settings.menu.show();\');'},
@@ -268,8 +270,8 @@ function ciniki_tenants_settings() {
             M.alert('All images in storage');        
         });
     };
-    this.moveproductstorage = function(clear) {
-        M.api.getJSONCb('ciniki.products.dbMoveFileStorage', {'tnid':M.curTenantID, 'clear':clear}, function(rsp) {
+    this.movecoursestorage = function(clear) {
+        M.api.getJSONCb('ciniki.courses.dbMoveFileStorage', {'tnid':M.curTenantID, 'clear':clear}, function(rsp) {
             if( rsp.stat != 'ok' ) {
                 M.api.err(rsp);
                 return false;
