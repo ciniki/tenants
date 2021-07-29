@@ -9,6 +9,7 @@ function ciniki_tenants_sync() {
         this.syncs = new M.panel('Tenant Syncronizations',
             'ciniki_tenants_sync', 'syncs',
             'mc', 'medium', 'sectioned', 'ciniki.tenants.sync.syncs');
+        this.syncs.data = null;
         this.syncs.sections = {
             'info':{'label':'Local System', 'list':{
                 'name':{'label':'System Name', 'value':'unknown'},
@@ -197,9 +198,9 @@ function ciniki_tenants_sync() {
                     return false;
                 }
                 var p = M.ciniki_tenants_sync.syncs;
+                p.data = rsp;
                 p.sections.info.list.name.value = rsp.name;
                 p.sections.info.list.uuid.value = rsp.uuid;
-                p.sections.synclist.data = rsp.syncs;
                 p.refresh();
                 p.show(cb);
             });
