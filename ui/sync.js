@@ -199,6 +199,7 @@ function ciniki_tenants_sync() {
                 }
                 var p = M.ciniki_tenants_sync.syncs;
                 p.data = rsp;
+                p.data.synclist = rsp.syncs;
                 p.sections.info.list.name.value = rsp.name;
                 p.sections.info.list.uuid.value = rsp.uuid;
                 p.refresh();
