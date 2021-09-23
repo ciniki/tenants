@@ -147,21 +147,21 @@ function ciniki_tenants_main() {
 //                    case 2: return '<span class="maintext">' + d.due_date + '</span><span class="subtext">' + d.due_time + '</span>';
                 }
             }
-            if( s == '_timetracker_projects' ) {
+            if( s == '_timetracker_types' ) {
                 switch(j) {
-                    case 0: return M.multiline(d.name, d.notes);
+                    case 0: return M.multiline(d.type, d.notes);
                     case 1: return (d.today_length_display != null ? d.today_length_display : '-');
                     case 2: 
                         if( d.entry_id > 0 ) {
                             return '<button onclick="event.stopPropagation();M.ciniki_tenants_main.menu.stopEntry(\'' + d.entry_id + '\');">Stop</button>';
                         } else {
-                            return '<button onclick="event.stopPropagation();M.ciniki_tenants_main.menu.startEntry(\'' + d.id + '\');">Start</button>';
+                            return '<button onclick="event.stopPropagation();M.ciniki_tenants_main.menu.startEntry(\'' + d.type + '\');">Start</button>';
                         }
                 }
             }
             if( s == '_timetracker_entries' ) {
                 switch(j) {
-                    case 0: return M.multiline(d.project_name, d.notes);
+                    case 0: return M.multiline(d.type, d.notes);
                     case 1: return M.multiline(d.start_dt_display, (d.end_dt_display != '' ? d.end_dt_display : '-'));
                     case 2: return d.length_display;
                 }
@@ -177,7 +177,7 @@ function ciniki_tenants_main() {
             return null;
         };
         this.menu.rowClass = function(s, i, d) {
-            if( s == '_timetracker_projects' ) {
+            if( s == '_timetracker_types' ) {
                 if( d.entry_id > 0 ) {
                     return 'statusgreen aligncenter';
                 } else {
@@ -818,9 +818,9 @@ function ciniki_tenants_main() {
                 }
             }
             if( M.modOn('ciniki.timetracker') ) {
-                this.menu.data._timetracker_projects = {};
+                this.menu.data._timetracker_types = {};
                 this.menu.data._timetracker_entries = {};
-                this.menu.sections._timetracker_projects = {'label':'Time Tracker', 'type':'simplegrid', 'num_cols':3,
+                this.menu.sections._timetracker_types = {'label':'Time Tracker', 'type':'simplegrid', 'num_cols':3,
                     'minwidth':'20em',
                     'flexcolumn':3,
                     'flexgrow':1,
@@ -847,17 +847,17 @@ function ciniki_tenants_main() {
                     'noData':'Loading...',
                     }; */
                 this.menu.startEntry = function(id) {
-                    M.api.getJSONBgCb('ciniki.timetracker.tracker', {'tnid':M.curTenantID, 'action':'start', 'project_id':id}, function(rsp) {
+                    M.api.getJSONBgCb('ciniki.timetracker.tracker', {'tnid':M.curTenantID, 'action':'start', 'type':id}, function(rsp) {
                         if( rsp.stat != 'ok' ) {
                             M.api.err(rsp);
                             return false;
                         }
                         var p = M.ciniki_tenants_main.menu;
                         p.data = rsp;
-                        p.sections._timetracker_projects.label = 'Time Tracker - ' + rsp.today_length_display;
-                        p.data._timetracker_projects = rsp.projects;
+                        p.sections._timetracker_types.label = 'Time Tracker - ' + rsp.today_length_display;
+                        p.data._timetracker_types = rsp.types;
                         p.data._timetracker_entries = rsp.entries;
-                        p.refreshSections(['_timetracker_projects', '_timetracker_entries']);
+                        p.refreshSections(['_timetracker_types', '_timetracker_entries']);
                     });
                 }
                 this.menu.stopEntry = function(id) {
@@ -868,10 +868,10 @@ function ciniki_tenants_main() {
                         }
                         var p = M.ciniki_tenants_main.menu;
                         p.data = rsp;
-                        p.sections._timetracker_projects.label = 'Time Tracker - ' + rsp.today_length_display;
-                        p.data._timetracker_projects = rsp.projects;
+                        p.sections._timetracker_types.label = 'Time Tracker - ' + rsp.today_length_display;
+                        p.data._timetracker_types = rsp.types;
                         p.data._timetracker_entries = rsp.entries;
-                        p.refreshSections(['_timetracker_projects', '_timetracker_entries']);
+                        p.refreshSections(['_timetracker_types', '_timetracker_entries']);
                     });
                 }
                 this.menu.timeTrackerTimeout = null;
@@ -883,12 +883,12 @@ function ciniki_tenants_main() {
                                 return false;
                             }
                             var p = M.ciniki_tenants_main.menu;
-                            p.sections._timetracker_projects.label = 'Time Tracker - ' + rsp.today_length_display;
-                            p.data._timetracker_projects = rsp.projects;
+                            p.sections._timetracker_types.label = 'Time Tracker - ' + rsp.today_length_display;
+                            p.data._timetracker_types = rsp.types;
 //                            p.data._timetracker_entries = rsp.entries;
-                            p.sections._timetracker_projects.noData = 'No projects';
+                            p.sections._timetracker_types.noData = 'No projects';
 //                            p.sections._timetracker_entries.noData = 'No entries';
-                            p.refreshSections(['_timetracker_projects', '_timetracker_entries']);
+                            p.refreshSections(['_timetracker_types', '_timetracker_entries']);
                             if( p.timeTrackerTimeout != null ) {
                                 clearTimeout(p.timeTrackerTimeout);
                             }
