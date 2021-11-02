@@ -265,7 +265,7 @@ function ciniki_tenants_billing() {
             M.startLoad();
             this.script = document.createElement('script');
             this.script.type = 'text/javascript';
-            // this.script.src = 'https://js.stripe.com/v2/';
+//            this.script.src = 'https://js.stripe.com/v3/';
             this.script.src = 'https://checkout.stripe.com/checkout.js';
             var done = false;
             var head = document.getElementsByTagName('head')[0];
