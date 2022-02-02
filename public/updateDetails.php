@@ -146,6 +146,7 @@ function ciniki_tenants_updateDetails(&$ciniki) {
         'social-vimeo-url',
         'social-instagram-username',
         'social-linkedin-url',
+        'social-linktree-username',
         );
     foreach($ciniki['request']['args'] as $arg_name => $arg_value) {
         if( in_array($arg_name, $allowed_keys) ) {

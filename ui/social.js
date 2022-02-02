@@ -40,6 +40,9 @@ function ciniki_tenants_social() {
             'vimeo':{'label':'Vimeo', 'fields':{
                 'social-vimeo-url':{'label':'URL', 'type':'text'},
                 }},
+            'linktree':{'label':'Linktree', 'fields':{
+                'social-linktree-username':{'label':'URL', 'type':'text'},
+                }},
             '_save':{'label':'', 'buttons':{
                 'save':{'label':'Save', 'fn':'M.ciniki_tenants_social.saveSocial();'},
                 }},
