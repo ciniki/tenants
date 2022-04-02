@@ -141,7 +141,7 @@ function ciniki_tenants_settings() {
                         },
                     'upgradeMemberProducts':{'label':'Upgrade to Member Products', 
                         'visible':function() { return M.modFlagSet('ciniki.customers',0x04) ? 'yes' : 'no'; },
-                        'fn':'M.startApp(\'ciniki.customers.upgradeToProducts\', null, \'M.ciniki_tenants_settings.menu.show();\');',
+                        'fn':'M.ciniki_tenants_settings.customersUpgradeToProducts();'
                         },
 //                    'checkimages':{'label':'Check Image Storage', 'fn':'M.ciniki_tenants_settings.checkimagestorage("no");'},
 //                    'checkimagesclean':{'label':'Check Image Storage & Clean DB', 'fn':'M.ciniki_tenants_settings.checkimagestorage("yes");'},
@@ -166,7 +166,15 @@ function ciniki_tenants_settings() {
         this.menu.show(cb);
     }
 
-
+    this.customersUpgradeToProducts = function() {
+        M.api.getJSONCb('ciniki.customers.upgradeToProducts', {'tnid':M.curTenantID}, function(rsp) {
+            if( rsp.stat != 'ok' ) {
+                M.api.err(rsp);
+                return false;
+            }
+            M.alert('All Done');
+        });
+    }
 
     this.fixallintegrity = function() {
         M.startLoad();
