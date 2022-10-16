@@ -30,6 +30,7 @@ function ciniki_tenants_info() {
                 'contact.tollfree.number':{'label':'Tollfree', 'type':'text'},
                 'contact.fax.number':{'label':'Fax', 'type':'text'},
                 'contact.email.address':{'label':'Email', 'type':'text'},
+                'contact.website.url':{'label':'Website', 'type':'text'},
             }},
         'address':{'label':'Address', 
 //            'visible':function() {return M.modOn('ciniki.web') ? 'yes' : 'no'; },

@@ -134,6 +134,7 @@ function ciniki_tenants_updateDetails(&$ciniki) {
         'contact.tollfree.number',
         'contact.fax.number',
         'contact.email.address',
+        'contact.website.url',
         'ciniki.manage.css',
         'social-facebook-url',
         'social-twitter-tenant-name',
