@@ -22,7 +22,7 @@ function ciniki_tenants_info() {
                 },
             }},
         'contact':{'label':'Contact', 
-            'visible':function() {return M.modOn('ciniki.web') ? 'yes' : 'no'; },
+//            'visible':function() {return M.modOn('ciniki.web') ? 'yes' : 'no'; },
             'fields':{
                 'contact.person.name':{'label':'Name', 'type':'text'},
                 'contact.phone.number':{'label':'Phone', 'type':'text'},
@@ -32,7 +32,7 @@ function ciniki_tenants_info() {
                 'contact.email.address':{'label':'Email', 'type':'text'},
             }},
         'address':{'label':'Address', 
-            'visible':function() {return M.modOn('ciniki.web') ? 'yes' : 'no'; },
+//            'visible':function() {return M.modOn('ciniki.web') ? 'yes' : 'no'; },
             'fields':{
                 'contact.address.street1':{'label':'Street', 'type':'text'},
                 'contact.address.street2':{'label':'Street', 'type':'text'},
