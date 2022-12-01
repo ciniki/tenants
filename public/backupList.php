@@ -62,24 +62,29 @@ function ciniki_tenants_backupList($ciniki) {
         . '/' . $uuid[0] . '/' . $uuid;
 
     $backups = array();
-    if( ($dh = opendir($backup_dir)) === false ) {
-        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.tenants.39', 'msg'=>'Unable to find backups'));
-        
-    }
-    while( ($file = readdir($dh)) !== false ) {
-        if( preg_match("/^backup-(([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])-([0-9][0-9])([0-9][0-9])).zip$/", $file, $matches) ) {
-            // Date on the file is UTC
-            $backup_time = strtotime($matches[1]);
-            $backup_date = new DateTime($matches[2] . '-' . $matches[3] . '-' . $matches[4] . ' ' . $matches[5] . '.' . $matches[6] . '.00', new DateTimeZone('UTC'));
-            $backup_date->setTimezone(new DateTimeZone($intl_timezone));
-            $backups[] = array('backup'=>array(
-                'id'=>$file,
-                'ts'=>$backup_date->format('U'),
-                'name'=>$backup_date->format('M j, Y g:i a'),
-                ));
+    if( file_exists($backup_dir) ) {
+        if( ($dh = opendir($backup_dir)) === false ) {
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.tenants.39', 'msg'=>'Unable to find backups'));
+            
         }
+        while( ($file = readdir($dh)) !== false ) {
+            if( preg_match("/^backup-(([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])-([0-9][0-9])([0-9][0-9])).zip$/", $file, $matches) ) {
+                // Date on the file is UTC
+                $backup_time = strtotime($matches[1]);
+                $backup_date = new DateTime($matches[2] . '-' . $matches[3] . '-' . $matches[4] . ' ' . $matches[5] . '.' . $matches[6] . '.00', new DateTimeZone('UTC'));
+                $backup_date->setTimezone(new DateTimeZone($intl_timezone));
+                $backups[] = array('backup'=>array(
+                    'id'=>$file,
+                    'ts'=>$backup_date->format('U'),
+                    'name'=>$backup_date->format('M j, Y g:i a'),
+                    ));
+            }
+        }
+        closedir($dh);
+    } 
+    else {
+        $backups = array();
     }
-    closedir($dh);
 
     //
     // Sort the backup list in descending order so latest backup is at the top.
