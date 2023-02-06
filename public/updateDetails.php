@@ -42,7 +42,7 @@ function ciniki_tenants_updateDetails(&$ciniki) {
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
         'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'tenant.name'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Tenant Name'), 
-        'tenant.category'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Category'), 
+        'tenant.category'=>array('required'=>'no', 'blank'=>'yes', 'trim'=>'no', 'name'=>'Category'), 
         'tenant.sitename'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Sitename'), 
         'tenant.tagline'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Tagline'), 
         ));
