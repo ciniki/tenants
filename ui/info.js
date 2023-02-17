@@ -15,7 +15,7 @@ function ciniki_tenants_info() {
                 'active':function() { return (M.stMode==null&&(M.userPerms&0x01)==1?'yes':'no');}, 
                 },
             'tenant.sitename':{'label':'Sitename', 'type':'text', 'livesearch':'yes', 'livesearchempty':'yes',
-                'active':function() { return (M.modOn('ciniki.web')&&(M.userPerms&0x01)==1?'yes':'no');}, 
+//                'active':function() { return (M.modOn('ciniki.web')&&(M.userPerms&0x01)==1?'yes':'no');}, 
                 },
             'tenant.tagline':{'label':'Tagline', 'type':'text', 'livesearch':'yes', 'livesearchempty':'yes',
                 'active':function() { return (M.modOn('ciniki.web')?'yes':'no');}, 
