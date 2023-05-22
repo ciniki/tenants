@@ -49,9 +49,9 @@ print "#/bin/sh\n\n"
     . "# Load Core\n"
     . "mysqldump $fromdb ciniki_core_api_keys | mysql $todb\n"
     . "mysqldump $fromdb --where='id=$tnid' ciniki_tenants | mysql $todb\n"
-    . "mysqldump $fromdb --where='id=$tnid' ciniki_tenant_details | mysql $todb\n"
-    . "mysqldump $fromdb --where='id=$tnid' ciniki_tenant_modules | mysql $todb\n"
-    . "mysqldump $fromdb --where='id=$tnid' ciniki_tenant_users | mysql $todb\n"
+    . "mysqldump $fromdb --where='tnid=$tnid' ciniki_tenant_details | mysql $todb\n"
+    . "mysqldump $fromdb --where='tnid=$tnid' ciniki_tenant_modules | mysql $todb\n"
+    . "mysqldump $fromdb --where='tnid=$tnid' ciniki_tenant_users | mysql $todb\n"
     . "\n";
 
 //
@@ -83,7 +83,7 @@ foreach($rc['rows'] as $row) {
         if( isset($rc['objects']) ) {
             foreach($rc['objects'] as $obj) {
                 if( isset($obj['table']) ) {
-                    print "mysqldump $fromdb --where='id=$tnid' {$obj['table']} | mysql $todb\n";
+                    print "mysqldump $fromdb --where='tnid=$tnid' {$obj['table']} | mysql $todb\n";
                 }
             }
         }
