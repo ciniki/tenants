@@ -46,12 +46,19 @@ $todb = $argv[3];
 //
 print "#/bin/sh\n\n"
     . "# Create command: php ./setuptestsql.php $tnid '$fromdb' '$todb'\n\n"
-    . "# Load Core\n"
+    . "# Load Core, Users, Tenants\n"
     . "mysqldump $fromdb ciniki_core_api_keys | mysql $todb\n"
+    . "mysqldump $fromdb --no-data ciniki_core_error_logs ciniki_core_session_data | mysql $todb\n"
+    . "mysqldump $fromdb --where='id IN (1)' ciniki_users | mysql $todb\n"
+    . "mysqldump $fromdb --where='user_id IN (1)' ciniki_user_details ciniki_user_tokens | mysql $todb\n"
+    . "mysqldump $fromdb --no-data ciniki_user_auth_failures ciniki_user_auth_log ciniki_user_history | mysql $todb\n"
     . "mysqldump $fromdb --where='id=$tnid' ciniki_tenants | mysql $todb\n"
+    . "mysqldump $fromdb --where='tnid=$tnid' ciniki_tenant_domains | mysql $todb\n"
+    . "mysqldump $fromdb --where='tnid=$tnid' ciniki_tenant_uihelp | mysql $todb\n"
     . "mysqldump $fromdb --where='tnid=$tnid' ciniki_tenant_details | mysql $todb\n"
     . "mysqldump $fromdb --where='tnid=$tnid' ciniki_tenant_modules | mysql $todb\n"
     . "mysqldump $fromdb --where='tnid=$tnid' ciniki_tenant_users | mysql $todb\n"
+    . "mysqldump $fromdb --where='tnid=$tnid' ciniki_tenant_user_details | mysql $todb\n"
     . "\n";
 
 //
