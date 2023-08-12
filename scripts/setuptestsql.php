@@ -59,6 +59,8 @@ print "#/bin/sh\n\n"
     . "mysqldump $fromdb --where='tnid=$tnid' ciniki_tenant_modules | mysql $todb\n"
     . "mysqldump $fromdb --where='tnid=$tnid' ciniki_tenant_users | mysql $todb\n"
     . "mysqldump $fromdb --where='tnid=$tnid' ciniki_tenant_user_details | mysql $todb\n"
+    . "mysqldump $fromdb --no-data --where='tnid=$tnid' ciniki_cron | mysql $todb\n"
+    . "mysqldump $fromdb --no-data --where='tnid=$tnid' ciniki_cron_log | mysql $todb\n"
     . "\n";
 
 //
