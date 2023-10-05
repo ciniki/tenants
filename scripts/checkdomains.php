@@ -57,7 +57,7 @@ $strsql = "SELECT id, tnid, domain, status, expiry_date "
     . "";
 $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.tenants', 'item');
 if( $rc['stat'] != 'ok' ) {
-    return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.tenants.119', 'msg'=>'Unable to load item', 'err'=>$rc['err']));
+    return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.tenants.124', 'msg'=>'Unable to load item', 'err'=>$rc['err']));
 }
 $domains = array();
 foreach($rc['rows'] as $row) {

@@ -75,7 +75,7 @@ $strsql = "SELECT package, module "
     . "";
 $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.tenants', 'item');
 if( $rc['stat'] != 'ok' ) {
-    return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.tenants.119', 'msg'=>'Unable to load item', 'err'=>$rc['err']));
+    return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.tenants.118', 'msg'=>'Unable to load item', 'err'=>$rc['err']));
 }
 foreach($rc['rows'] as $row) {
     $pkg = $row['package'];

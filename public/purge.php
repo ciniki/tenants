@@ -187,10 +187,10 @@ function ciniki_tenants_purge($ciniki) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'recursiveRmdir');
         $rc = ciniki_core_recursiveRmdir($ciniki, $cache_dir);
         if( $rc['stat'] != 'ok' ) {
-            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.tenants.116', 'msg'=>'Unable to remove cache directory contents', 'err'=>$rc['err']));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.tenants.120', 'msg'=>'Unable to remove cache directory contents', 'err'=>$rc['err']));
         }
         if( !rmdir($cache_dir) ) {
-            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.tenants.117', 'msg'=>'Unable to remove cache directory'));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.tenants.121', 'msg'=>'Unable to remove cache directory'));
         }
     }
 
@@ -203,10 +203,26 @@ function ciniki_tenants_purge($ciniki) {
         error_log("PURGE[" . $tenant['id'] . "]: web cache dir " . $cache_dir);
         $rc = ciniki_core_recursiveRmdir($ciniki, $cache_dir);
         if( $rc['stat'] != 'ok' ) {
-            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.tenants.116', 'msg'=>'Unable to remove web cache directory contents', 'err'=>$rc['err']));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.tenants.122', 'msg'=>'Unable to remove web cache directory contents', 'err'=>$rc['err']));
         }
         if( !rmdir($cache_dir) ) {
-            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.tenants.117', 'msg'=>'Unable to remove web cache directory'));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.tenants.123', 'msg'=>'Unable to remove web cache directory'));
+        }
+    }
+
+    //
+    // Remove the web cache directory
+    //
+    $cache_dir = $ciniki['config']['ciniki.core']['modules_dir'] . '/wng/cache/' . $tenant['uuid'][0] . '/' . $tenant['uuid'];
+    if( is_dir($cache_dir) ) {
+        $rc = ciniki_core_recursiveRmdir($ciniki, $cache_dir);
+        error_log("PURGE[" . $tenant['id'] . "]: wng cache dir " . $cache_dir);
+        $rc = ciniki_core_recursiveRmdir($ciniki, $cache_dir);
+        if( $rc['stat'] != 'ok' ) {
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.tenants.113', 'msg'=>'Unable to remove wng cache directory contents', 'err'=>$rc['err']));
+        }
+        if( !rmdir($cache_dir) ) {
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.tenants.114', 'msg'=>'Unable to remove wng cache directory'));
         }
     }
 

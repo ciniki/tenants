@@ -67,7 +67,7 @@ function ciniki_tenants_uihelpGet($ciniki) {
             . "";
         $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.tenants', 'content');
         if( $rc['stat'] != 'ok' ) {
-            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.tenants.107', 'msg'=>'Unable to load content', 'err'=>$rc['err']));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.tenants.125', 'msg'=>'Unable to load content', 'err'=>$rc['err']));
         }
         $content = isset($rc['content']) ? $rc['content'] : array('content'=>'No help added');
         $content['content_display'] = nl2br($content['content']);
@@ -96,7 +96,7 @@ function ciniki_tenants_uihelpGet($ciniki) {
             . "";
         $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.tenants', 'content');
         if( $rc['stat'] != 'ok' ) {
-            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.tenants.107', 'msg'=>'Unable to load content', 'err'=>$rc['err']));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.tenants.126', 'msg'=>'Unable to load content', 'err'=>$rc['err']));
         }
         $content = isset($rc['content']) ? $rc['content'] : array('content'=>'Nothing added');
     }
