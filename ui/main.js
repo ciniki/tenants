@@ -280,7 +280,10 @@ function ciniki_tenants_main() {
         //
         M.api.getJSONCb('ciniki.tenants.getUserSettings', {'tnid':M.curTenantID}, function(rsp) {
             // If user doesn't have permission, bump back to main menu
-            if( rsp.stat != 'ok' && rsp.err != null && rsp.err.code == 'ciniki.tenants.14' ) {
+            if( rsp.stat != 'ok' && rsp.err != null 
+                && (rsp.err.code == 'ciniki.tenants.14' || rsp.err.code == 'ciniki.tenants.18') 
+                ) {
+                M.api.err(rsp);
                 localStorage.removeItem("lastTenantID");
                 M.curTenantID = null;
                 delete M.curTenant;
