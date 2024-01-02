@@ -46,17 +46,29 @@ function ciniki_tenants_updateModuleChangeDate($ciniki, $tnid, $package, $module
     // Check if a row was updated, if not, run an insert
     //
     if( isset($rc['num_affected_rows']) && $rc['num_affected_rows'] == 0 ) {
-        $strsql = "INSERT INTO ciniki_tenant_modules (tnid, package, module, "
-            . "status, ruleset, date_added, last_updated, last_change) VALUES ("
-            . "'" . ciniki_core_dbQuote($ciniki, $tnid) . "', "
-            . "'" . ciniki_core_dbQuote($ciniki, $package) . "', "
-            . "'" . ciniki_core_dbQuote($ciniki, $module) . "', "
-            . "2, '', UTC_TIMESTAMP(), UTC_TIMESTAMP(), UTC_TIMESTAMP() "
-            . ")";
-        ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbInsert');
-        $rc = ciniki_core_dbInsert($ciniki, $strsql, "$package.$module");
+        $strsql = "SELECT last_change "
+            . "FROM ciniki_tenant_modules "
+            . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
+            . "AND package = '" . ciniki_core_dbQuote($ciniki, $package) . "' "
+            . "AND module = '" . ciniki_core_dbQuote($ciniki, $module) . "' "
+            . "";
+        $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.tenants', 'mod');
         if( $rc['stat'] != 'ok' ) {
-            return $rc;
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.tenants.128', 'msg'=>'Unable to load mod', 'err'=>$rc['err']));
+        }
+        if( !isset($rc['mod']) ) {
+            $strsql = "INSERT INTO ciniki_tenant_modules (tnid, package, module, "
+                . "status, ruleset, date_added, last_updated, last_change) VALUES ("
+                . "'" . ciniki_core_dbQuote($ciniki, $tnid) . "', "
+                . "'" . ciniki_core_dbQuote($ciniki, $package) . "', "
+                . "'" . ciniki_core_dbQuote($ciniki, $module) . "', "
+                . "2, '', UTC_TIMESTAMP(), UTC_TIMESTAMP(), UTC_TIMESTAMP() "
+                . ")";
+            ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbInsert');
+            $rc = ciniki_core_dbInsert($ciniki, $strsql, "$package.$module");
+            if( $rc['stat'] != 'ok' ) {
+                return $rc;
+            }
         }
     }
 
