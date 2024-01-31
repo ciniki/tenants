@@ -20,7 +20,7 @@ function ciniki_tenants_flags($ciniki, $modules) {
 //        array('flag'=>array('bit'=>'5', 'name'=>'Retail', 'group'=>'ciniki.retail')), // Removed May 2019
 //      array('flag'=>array('bit'=>'6', 'name'=>'')),
 //      array('flag'=>array('bit'=>'7', 'name'=>'')),
-//      array('flag'=>array('bit'=>'8', 'name'=>'')),
+        array('flag'=>array('bit'=>'8', 'name'=>'Chat Support')),
 //      0x0100
         array('flag'=>array('bit'=>'9', 'name'=>'Menu Cal/Tasks/Time')),
         array('flag'=>array('bit'=>'10', 'name'=>'Custom Help')),
