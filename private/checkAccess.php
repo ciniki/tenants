@@ -115,7 +115,6 @@ function ciniki_tenants_checkAccess(&$ciniki, $tnid, $method) {
         'ciniki.tenants.reportGet',
         'ciniki.tenants.reportList',
         'ciniki.tenants.reportUpdate',
-        'ciniki.tenants.uihelpGet',
         'ciniki.tenants.uihelpUpdate',
         );
     if( in_array($method, $owner_methods) && in_array('owners', $groups) ) {
@@ -142,7 +141,7 @@ function ciniki_tenants_checkAccess(&$ciniki, $tnid, $method) {
     }
 
     //
-    // Limit the functions the tenant owner has access to.  Any
+    // Limit the functions the tenant employee has access to.  Any
     // other methods will be denied access.
     //
     $employee_methods = array(
@@ -162,6 +161,7 @@ function ciniki_tenants_checkAccess(&$ciniki, $tnid, $method) {
         'ciniki.tenants.subscriptionCancel',
         'ciniki.tenants.settingsIntlGet',
         'ciniki.tenants.settingsIntlUpdate',
+        'ciniki.tenants.uihelpGet',
         );
     if( in_array($method, $employee_methods) && in_array('employees', $groups) ) {
         return array('stat'=>'ok', 'modules'=>$modules, 'groups'=>$groups);
