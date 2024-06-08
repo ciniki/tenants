@@ -19,7 +19,12 @@ function ciniki_tenants_users() {
         'mc', 'medium', 'sectioned', 'ciniki.tenants.users');
     this.users.data = {};
     this.users.sections = {};
-    this.users.cellValue = function(s, i, j, d) { return d.user.firstname + ' ' + d.user.lastname; }    
+    this.users.cellValue = function(s, i, j, d) { 
+        switch(j) {
+            case 0: return d.user.firstname + ' ' + d.user.lastname;
+            case 1: return d.user.title;
+        }
+    }    
     this.users.rowFn = function(s, i, d) { return 'M.ciniki_tenants_users.edit.open(\'M.ciniki_tenants_users.users.open();\',\'' + s + '\',\'' + d.user.user_id + '\');'; }
     this.users.noData = function() { return 'No users'; }
     this.users.sectionData = function(s) { return this.data[s]; }
@@ -43,9 +48,9 @@ function ciniki_tenants_users() {
             for(i in rsp.permission_groups) {
                 p.sections[i] = {'label':rsp.permission_groups[i].name,
                     'type':'simplegrid',
-                    'num_cols':1,
-                    'headerValues':null,
-                    'cellClasses':[''],
+                    'num_cols':2,
+                    'headerValues':['User', 'Title'],
+                    'cellClasses':['', ''],
                     'addTxt':'Add',
                     'addFn':'M.ciniki_tenants_users.showAdd(\'' + i + '\');',
                     };
@@ -71,17 +76,17 @@ function ciniki_tenants_users() {
     this.edit.user_package = '';
     this.edit.user_permission_group = '';
     this.edit.sections = {
-        'info':{'label':'Login', 'list':{
+        'info':{'label':'Login', 'aside':'yes', 'list':{
             'firstname':{'label':'First', 'type':'noedit'},
             'lastname':{'label':'Last', 'type':'noedit'},
             'username':{'label':'Username', 'type':'noedit'},
             'email':{'label':'Email', 'type':'noedit'},
             'display_name':{'label':'Display', 'type':'noedit'},
             }},
-        '_eid':{'label':'', 'active':'no', 'fields':{
+        '_eid':{'label':'', 'active':'no', 'aside':'yes', 'fields':{
             'eid':{'label':'External ID', 'type':'text'},
             }},
-        'details':{'label':'Contact Info', 'type':'simpleform', 'fields':{
+        'details':{'label':'Contact Info', 'type':'simpleform', 'aside':'yes', 'fields':{
             'employee.title':{'label':'Title', 'type':'text'},
             'contact.phone.number':{'label':'Phone', 'type':'text'},
             'contact.cell.number':{'label':'Cell', 'type':'text'},
@@ -91,6 +96,8 @@ function ciniki_tenants_users() {
             }},
 //          '_web':{'label':'Web Options', 'visible':'no', 'type':'simpleform', 'fields':{
 //              }},
+        'modperms':{'label':'Permissions', 'visible':'no', 'fields':{
+            }},
         '_image':{'label':'Image', 'active':'no', 'type':'imageform', 'fields':{
             'employee-bio-image':{'label':'', 'type':'image_id', 'controls':'all', 'hidelabel':'yes', 'history':'no'},
             }},
@@ -138,7 +145,7 @@ function ciniki_tenants_users() {
                 return false;
             }
             var p = M.ciniki_tenants_users.edit;
-            if( M.curTenant.modules['ciniki.web'] != null ) {
+            if( M.curTenant.modules['ciniki.web'] != null && M.curTenant.modules['ciniki.web'].status == 1 ) {
                 p.sections._image.active = 'yes';
                 p.sections._content.active = 'yes';
                 if( rsp.user['employee-bio-image-caption'] != null && rsp.user['employee-bio-image-caption'] != '' ) {
@@ -153,6 +160,23 @@ function ciniki_tenants_users() {
                 p.sections._image_caption.active = 'no';
                 p.sections._content.active = 'no';
             }
+            // Setup extra modperms
+            if( p.permission_group == 'employees' && rsp.modperms != null ) {
+                p.sections.modperms.fields = {};
+                for(var i in rsp.modperms) {
+                    p.sections.modperms.fields[i] = {
+                        'label':rsp.modperms[i].label,
+                        'type':rsp.modperms[i].type != null && rsp.modperms[i].type == 'toggle' ? 'multitoggle' : 'multiselect', 
+                        'none':'yes',
+                        'options':rsp.modperms[i].perms,
+                        'toggles':rsp.modperms[i].perms,
+                        };
+                }
+                p.sections.modperms.visible = 'yes';
+                p.size = 'medium mediumaside';
+            } else {
+                p.size = 'medium';
+            }
             p.data = rsp.user;
             p.refresh();
             p.show(cb);
@@ -161,7 +185,7 @@ function ciniki_tenants_users() {
     this.edit.save = function() {
         var c = this.serializeForm('no');
         if( c != '' ) {
-            M.api.postJSONCb('ciniki.tenants.userUpdateDetails', {'tnid':M.curTenantID, 'user_id':this.user_id}, c, function(rsp) {
+            M.api.postJSONCb('ciniki.tenants.userUpdateDetails', {'tnid':M.curTenantID, 'user_id':this.user_id, 'permission_group':this.permission_group}, c, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;
@@ -174,7 +198,11 @@ function ciniki_tenants_users() {
     }
     this.edit.remove = function(id) {
         if( id != null && id > 0 ) {
-            M.confirm('Are you sure you want to remove this user as an Owner?',null,function() {
+            var usertype = 'Owner';
+            if( this.permission_group == 'employees' ) {
+                usertype = 'Employee';
+            }
+            M.confirm('Are you sure you want to remove this user as an ' + usertype + '?',null,function() {
                 M.api.getJSONCb('ciniki.tenants.userRemove', {'tnid':M.curTenantID, 'user_id':id, 
                     'package':M.ciniki_tenants_users.edit.package, 
                     'permission_group':M.ciniki_tenants_users.edit.permission_group}, function(rsp) {

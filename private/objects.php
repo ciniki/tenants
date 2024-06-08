@@ -42,6 +42,18 @@ function ciniki_tenants_objects($ciniki) {
             ),
         'history_table' => 'ciniki_tenant_history',
         );
+    $objects['user'] = array(
+        'name' => 'User',
+        'sync' => 'yes',
+        'o_name' => 'user',
+        'o_container' => 'users',
+        'table' => 'ciniki_tenant_users',
+        'fields' => array(
+            'eid' => array('name'=>'External ID', 'default'=>''),
+            'modperms' => array('name'=>'Module Permissions', 'default'=>''),
+            ),
+        'history_table' => 'ciniki_tenant_history',
+        );
     
     return array('stat'=>'ok', 'objects'=>$objects);
 }

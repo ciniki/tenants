@@ -27,6 +27,7 @@ function ciniki_tenants_userUpdateDetails(&$ciniki) {
         'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'user_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'User'), 
         'eid'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'External ID'), 
+        'permission_group'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Permission Group'), 
         ));
     if( $rc['stat'] != 'ok' ) {
         return $rc;
@@ -272,6 +273,74 @@ function ciniki_tenants_userUpdateDetails(&$ciniki) {
                     ciniki_core_dbTransactionRollback($ciniki, 'ciniki.tenants');
                     return $rc;
                 }
+            }
+        }
+    }
+
+    //
+    // Only update permissions groups for employees
+    //
+    if( isset($args['permission_group']) && $args['permission_group'] == 'employees' ) {
+        $strsql = "SELECT id, modperms "
+            . "FROM ciniki_tenant_users "
+            . "WHERE user_id = '" . ciniki_core_dbQuote($ciniki, $args['user_id']) . "' "
+            . "AND package = 'ciniki' "
+            . "AND permission_group = '" . ciniki_core_dbQuote($ciniki, $args['permission_group']) . "' "
+            . "AND tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
+            . "";
+        $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.tenants', 'user');
+        if( $rc['stat'] != 'ok' ) {
+            return $rc;
+        }
+        $user = $rc['user'];
+        if( $user['modperms'] != '' ) {
+            $user_mod_perms = array_values(json_decode($user['modperms'], true));
+        } else {
+            $user_mod_perms = array();
+        }
+
+        //
+        // Load the perms for the modules in the tenant
+        //
+        foreach($ciniki['tenant']['modules'] as $module => $m) {
+            list($pkg, $mod) = explode('.', $module);
+            $rc = ciniki_core_loadMethod($ciniki, $pkg, $mod, 'hooks', 'modPerms');
+            if( $rc['stat'] == 'ok' ) {
+                $fn = $rc['function_call'];
+                $rc = $fn($ciniki, $args['tnid'], []);
+
+                //
+                // If the module argument was passed, then check to add/remove any permissions
+                //
+                if( isset($ciniki['request']['args']["{$pkg}.{$mod}"]) ) {
+                    $mod_perms_args = explode(',', $ciniki['request']['args']["{$pkg}.{$mod}"]);
+                    foreach($rc['modperms']['perms'] as $pid => $perm) {
+                        //
+                        // Check if permission should be added
+                        if( !in_array($pid, $user_mod_perms) && in_array($pid, $mod_perms_args) ) {
+                            $user_mod_perms[] = $pid;
+                        }
+                        //
+                        // Check if should be removed
+                        //
+                        elseif( in_array($pid, $user_mod_perms) && !in_array($pid, $mod_perms_args) ) {
+                            $key = array_search($pid, $user_mod_perms);
+                            if( $key !== false ) {
+                                unset($user_mod_perms[$key]);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        $new_modperms = json_encode(array_values($user_mod_perms));
+        if( $new_modperms != $user['modperms'] ) {
+            ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectUpdate');
+            $rc = ciniki_core_objectUpdate($ciniki, $args['tnid'], 'ciniki.tenants.user', $user['id'], array(
+                'modperms' => $new_modperms,
+                ), 0x04);
+            if( $rc['stat'] != 'ok' ) {
+                return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.tenants.129', 'msg'=>'Unable to update the user', 'err'=>$rc['err']));
             }
         }
     }

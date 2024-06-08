@@ -20,7 +20,7 @@
 #               employees - reduced set of permssions
 #               salesreps - sales rep
 #               reseller - The reseller who has control over some things.
-# 
+#
 # status:       The current status of the user.
 #
 #                   0 - unknown
@@ -40,10 +40,11 @@ create table ciniki_tenant_users (
     eid varchar(50) not null,
     package varchar(50) not null,
     permission_group varchar(50) not null,
+    modperms varchar(5000) not null,
     status tinyint unsigned not null,
     date_added datetime not null,
     last_updated datetime not null,
     last_login datetime not null,
     primary key (id),
     unique index (tnid, user_id, package, permission_group)
-) ENGINE=InnoDB, COMMENT='v1.06';
+) ENGINE=InnoDB, COMMENT='v1.07';

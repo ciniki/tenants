@@ -116,13 +116,25 @@ function ciniki_tenants_userList($ciniki) {
     // Get the list of users who have access to this tenant
     //
     $strsql = "SELECT ciniki_tenant_users.user_id, "
-        . "ciniki_users.username, ciniki_users.firstname, ciniki_users.lastname, ciniki_users.display_name, ciniki_users.email, "
+        . "ciniki_users.username, "
+        . "ciniki_users.firstname, "
+        . "ciniki_users.lastname, "
+        . "ciniki_users.display_name, "
+        . "ciniki_users.email, "
         . "ciniki_tenant_users.eid, "
-        . "CONCAT_WS('.', ciniki_tenant_users.package, ciniki_tenant_users.permission_group) AS permission_group "
-        . "FROM ciniki_tenant_users, ciniki_users "
+        . "CONCAT_WS('.', ciniki_tenant_users.package, ciniki_tenant_users.permission_group) AS permission_group, "
+        . "IFNULL(titles.detail_value, '') AS title "
+        . "FROM ciniki_tenant_users "
+        . "INNER JOIN ciniki_users ON ("
+            . "ciniki_tenant_users.user_id = ciniki_users.id "
+            . ") "
+        . "LEFT JOIN ciniki_tenant_user_details AS titles ON ("
+            . "ciniki_tenant_users.user_id = titles.user_id "
+            . "AND titles.detail_key = 'employee.title' "
+            . "AND titles.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' " 
+            . ") "
         . "WHERE ciniki_tenant_users.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' " 
         . "AND ciniki_tenant_users.status = 10 "
-        . "AND ciniki_tenant_users.user_id = ciniki_users.id "
         . "ORDER BY permission_group "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
@@ -130,7 +142,7 @@ function ciniki_tenants_userList($ciniki) {
         array('container'=>'groups', 'fname'=>'permission_group', 'name'=>'group', 
             'fields'=>array('permission_group')),
         array('container'=>'users', 'fname'=>'user_id', 'name'=>'user', 
-            'fields'=>array('user_id', 'eid', 'username', 'firstname', 'lastname', 'display_name', 'email')),
+            'fields'=>array('user_id', 'eid', 'username', 'firstname', 'lastname', 'display_name', 'email', 'title')),
         ));
     if( $rc['stat'] != 'ok' ) {
         return $rc;

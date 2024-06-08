@@ -40,21 +40,31 @@ function ciniki_tenants_userDetails($ciniki) {
     //
     // Get details for a user
     //
-    $strsql = "SELECT ciniki_tenant_users.user_id, ciniki_tenant_users.eid, ciniki_users.username, "
-        . "ciniki_users.firstname, ciniki_users.lastname, "
-        . "ciniki_users.email, ciniki_users.display_name, "
-        . "ciniki_tenant_user_details.detail_key, ciniki_tenant_user_details.detail_value "
+    $strsql = "SELECT ciniki_tenant_users.user_id, "
+        . "ciniki_tenant_users.eid, "
+        . "ciniki_tenant_users.modperms, "
+        . "ciniki_users.username, "
+        . "ciniki_users.firstname, "
+        . "ciniki_users.lastname, "
+        . "ciniki_users.email, "
+        . "ciniki_users.display_name, "
+        . "ciniki_tenant_user_details.detail_key, "
+        . "ciniki_tenant_user_details.detail_value "
         . "FROM ciniki_tenant_users "
-        . "LEFT JOIN ciniki_users ON (ciniki_tenant_users.user_id = ciniki_users.id ) "
-        . "LEFT OUTER JOIN ciniki_tenant_user_details ON (ciniki_tenant_users.tnid = ciniki_tenant_user_details.tnid "
-            . "AND ciniki_tenant_users.user_id = ciniki_tenant_user_details.user_id ) "
+        . "LEFT JOIN ciniki_users ON ("
+            . "ciniki_tenant_users.user_id = ciniki_users.id "
+            . ") "
+        . "LEFT OUTER JOIN ciniki_tenant_user_details ON ("
+            . "ciniki_tenant_users.tnid = ciniki_tenant_user_details.tnid "
+            . "AND ciniki_tenant_users.user_id = ciniki_tenant_user_details.user_id "
+            . ") "
         . "WHERE ciniki_tenant_users.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND ciniki_tenant_users.user_id = '" . ciniki_core_dbQuote($ciniki, $args['user_id']) . "' "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
     $rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.tenants', array(
         array('container'=>'users', 'fname'=>'user_id', 'name'=>'user', 
-            'fields'=>array('user_id', 'eid', 'firstname', 'lastname', 'username', 'email', 'display_name'),
+            'fields'=>array('user_id', 'eid', 'firstname', 'lastname', 'username', 'email', 'display_name', 'modperms'),
             'details'=>array('detail_key'=>'detail_value'),
             ),
         ));
@@ -88,6 +98,35 @@ function ciniki_tenants_userDetails($ciniki) {
         }
     }
 
-    return array('stat'=>'ok', 'user'=>$user);
+    if( $user['modperms'] != '' ) {
+        $user_mod_perms = array_values(json_decode($user['modperms'], true));
+    } else {
+        $user_mod_perms = array();
+    }
+
+    //
+    // Get the list of modperms for each module active for the tenant
+    //
+    $modperms = array();
+    foreach($ciniki['tenant']['modules'] as $module => $m) {
+        list($pkg, $mod) = explode('.', $module);
+        $rc = ciniki_core_loadMethod($ciniki, $pkg, $mod, 'hooks', 'modPerms');
+        if( $rc['stat'] == 'ok' ) {
+            $fn = $rc['function_call'];
+            $rc = $fn($ciniki, $args['tnid'], []);
+            $modperms["{$pkg}.{$mod}"] = $rc['modperms'];
+            $perms = '';
+            foreach($rc['modperms']['perms'] as $pid => $perm) {
+                if( in_array($pid, $user_mod_perms) ) {
+                    $perms .= ($perms != '' ? ',' : '') . $pid;
+                }
+            }
+            if( $perms != '' ) {
+                $user["{$pkg}.{$mod}"] = $perms;
+            }
+        }
+    }
+
+    return array('stat'=>'ok', 'user'=>$user, 'modperms'=>$modperms);
 }
 ?>

@@ -120,6 +120,29 @@ function ciniki_tenants_getUserSettings($ciniki) {
     }
 
     //
+    // Check if need to get modperms for employee
+    //
+    if( isset($rsp['permissions']['ciniki.employees']) ) {
+        $strsql = "SELECT id, modperms "
+            . "FROM ciniki_tenant_users "
+            . "WHERE user_id = '" . ciniki_core_dbQuote($ciniki, $ciniki['session']['user']['id']) . "' "
+            . "AND package = 'ciniki' "
+            . "AND permission_group = 'employees' "
+            . "AND tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
+            . "";
+        $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.tenants', 'user');
+        if( $rc['stat'] != 'ok' ) {
+            return $rc;
+        }
+        if( $rc['user']['modperms'] != '' ) {
+            $perms = array_values(json_decode($rc['user']['modperms'], true));
+            foreach($perms as $perm) {
+                $rsp['permissions'][$perm] = 'yes';
+            }
+        }
+    }
+
+    //
     // FIXME: Add check to see which groups the user is part of, and only hand back the module list
     //        for what they have access to.
     //
