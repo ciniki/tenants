@@ -122,6 +122,7 @@ function ciniki_tenants_userList($ciniki) {
         . "ciniki_users.display_name, "
         . "ciniki_users.email, "
         . "ciniki_tenant_users.eid, "
+        . "ciniki_tenant_users.modperms, "
         . "CONCAT_WS('.', ciniki_tenant_users.package, ciniki_tenant_users.permission_group) AS permission_group, "
         . "IFNULL(titles.detail_value, '') AS title "
         . "FROM ciniki_tenant_users "
@@ -142,7 +143,7 @@ function ciniki_tenants_userList($ciniki) {
         array('container'=>'groups', 'fname'=>'permission_group', 'name'=>'group', 
             'fields'=>array('permission_group')),
         array('container'=>'users', 'fname'=>'user_id', 'name'=>'user', 
-            'fields'=>array('user_id', 'eid', 'username', 'firstname', 'lastname', 'display_name', 'email', 'title')),
+            'fields'=>array('user_id', 'eid', 'username', 'firstname', 'lastname', 'display_name', 'email', 'title', 'modperms')),
         ));
     if( $rc['stat'] != 'ok' ) {
         return $rc;
@@ -151,6 +152,39 @@ function ciniki_tenants_userList($ciniki) {
         $rsp['groups'] = $rc['groups'];
     } else {
         $rsp['groups'] = array();
+    }
+
+    //
+    // Get the list of modperms for each module active for the tenant
+    //
+    $modperms = array();
+    foreach($ciniki['tenant']['modules'] as $module => $m) {
+        list($pkg, $mod) = explode('.', $module);
+        $rc = ciniki_core_loadMethod($ciniki, $pkg, $mod, 'hooks', 'modPerms');
+        if( $rc['stat'] == 'ok' ) {
+            $fn = $rc['function_call'];
+            $rc = $fn($ciniki, $args['tnid'], []);
+            $modperms["{$pkg}.{$mod}"] = $rc['modperms'];
+        }
+    }
+
+    foreach($rsp['groups'] as $gid => $g) {
+        if( $g['group']['permission_group'] == 'ciniki.employees' ) {
+            foreach($g['group']['users'] as $uid => $user) {
+                $user_perm_list = '';
+                if( $user['user']['modperms'] != '' ) {
+                    $mod_perms = array_values(json_decode($user['user']['modperms'], true));
+                    foreach($modperms as $perm) {
+                        foreach($perm['perms'] as $k => $v) {
+                            if( in_array($k, $mod_perms) ) {
+                                $user_perm_list .= ($user_perm_list != '' ? ', ' : '') . $perm['label'] . ' - ' . $v;
+                            }
+                        }
+                    }
+                }
+                $rsp['groups'][$gid]['group']['users'][$uid]['user']['modpermlist'] = $user_perm_list;
+            }
+        }
     }
 
     return $rsp;

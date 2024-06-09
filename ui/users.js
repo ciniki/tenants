@@ -16,13 +16,14 @@ function ciniki_tenants_users() {
 
     this.users = new M.panel('Owners & Employees',
         'ciniki_tenants_users', 'users',
-        'mc', 'medium', 'sectioned', 'ciniki.tenants.users');
+        'mc', 'xlarge', 'sectioned', 'ciniki.tenants.users');
     this.users.data = {};
     this.users.sections = {};
     this.users.cellValue = function(s, i, j, d) { 
         switch(j) {
             case 0: return d.user.firstname + ' ' + d.user.lastname;
             case 1: return d.user.title;
+            case 2: return (d.user.modpermlist != null ? d.user.modpermlist : '');
         }
     }    
     this.users.rowFn = function(s, i, d) { return 'M.ciniki_tenants_users.edit.open(\'M.ciniki_tenants_users.users.open();\',\'' + s + '\',\'' + d.user.user_id + '\');'; }
@@ -48,9 +49,9 @@ function ciniki_tenants_users() {
             for(i in rsp.permission_groups) {
                 p.sections[i] = {'label':rsp.permission_groups[i].name,
                     'type':'simplegrid',
-                    'num_cols':2,
-                    'headerValues':['User', 'Title'],
-                    'cellClasses':['', ''],
+                    'num_cols':(rsp.permission_groups[i].name == 'Employees' ? 3 : 2),
+                    'headerValues':['User', 'Title', 'Permissions'],
+                    'cellClasses':['', '', ''],
                     'addTxt':'Add',
                     'addFn':'M.ciniki_tenants_users.showAdd(\'' + i + '\');',
                     };
