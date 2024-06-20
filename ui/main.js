@@ -557,7 +557,7 @@ function ciniki_tenants_main() {
                 }
                 if( c > 4 && join < 0 ) {
                     join = 0;
-                    this.menu.sections[c] = {'label':' &nbsp; ', 'aside':'yes', 'list':{}, 'flexcolumn':1, 'minwidth':'10em', 'width':'30em', 'maxwidth':'40em'};
+                    this.menu.sections[c] = {'label':'', 'aside':'yes', 'list':{}, 'flexcolumn':1, 'minwidth':'10em', 'width':'30em', 'maxwidth':'40em'};
                 }
             }
         }
