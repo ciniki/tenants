@@ -64,6 +64,18 @@ function ciniki_tenants_userRemove(&$ciniki) {
     }
     $tenant_user_id = $rc['user']['id'];
 
+    //
+    // Check if object is used anywhere
+    //
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectCheckUsed');
+    $rc = ciniki_core_objectCheckUsed($ciniki, $args['tnid'], 'ciniki.users.user', $args['user_id']);
+    if( $rc['stat'] != 'ok' ) {
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.tenants.130', 'msg'=>'Unable to check if user is still connected.', 'err'=>$rc['err']));
+    }
+    if( $rc['used'] != 'no' ) {
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.tenants.131', 'msg'=>"The user is still in use. " . $rc['msg']));
+    }
+
     // Required functions
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbTransactionStart');
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbTransactionRollback');
