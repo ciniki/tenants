@@ -59,6 +59,7 @@ function ciniki_tenants_intlSettings(&$ciniki, $tnid) {
         if( !isset($ciniki['tenant']['settings']['intl-default-locale']) ) {
             $ciniki['tenant']['settings']['intl-default-locale'] = $rc['settings']['intl-default-locale'];
             $ciniki['tenant']['settings']['intl-default-currency-fmt'] = numfmt_create($rc['settings']['intl-default-locale'], NumberFormatter::CURRENCY);
+            numfmt_set_attribute($ciniki['tenant']['settings']['intl-default-currency-fmt'], NumberFormatter::ROUNDING_MODE, NumberFormatter::ROUND_HALFUP);
         }
         if( !isset($ciniki['tenant']['settings']['intl-default-currency']) ) {
             $ciniki['tenant']['settings']['intl-default-currency'] = $rc['settings']['intl-default-currency'];
