@@ -47,7 +47,7 @@ function ciniki_tenants_searchCategory($ciniki) {
         . "FROM ciniki_tenants "
         . "WHERE category like '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
         . "AND category <> '' "
-        . "ORDER BY category COLLATE latin1_general_cs "
+        . "ORDER BY category "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
     $rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.tenants', array(
