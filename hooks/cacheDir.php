@@ -34,6 +34,15 @@ function ciniki_tenants_hooks_cacheDir(&$ciniki, $tnid, $args) {
     elseif( isset($ciniki['tenant']['settings']['cache_dir']) ) {
         return array('stat'=>'ok', 'cache_dir'=>$ciniki['tenant']['settings']['cache_dir']);
     }
+    elseif( $tnid > 0 && isset($ciniki['tenant']['uuid']) ) {
+        $cache_dir = $ciniki['config']['ciniki.core']['cache_dir'] . '/' 
+            . $ciniki['tenant']['uuid'][0] . '/' . $ciniki['tenant']['uuid'];
+        if( !isset($ciniki['tenant']['settings']) ) {
+            $ciniki['tenant']['settings'] = array('cache_dir'=>$cache_dir);
+        } else {
+            $ciniki['tenant']['settings']['cache_dir'] = $cache_dir;
+        }
+    }
     elseif( $tnid > 0 ) {
         $strsql = "SELECT uuid FROM ciniki_tenants "
             . "WHERE id = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' ";

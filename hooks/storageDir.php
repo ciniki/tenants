@@ -36,6 +36,15 @@ function ciniki_tenants_hooks_storageDir(&$ciniki, $tnid, $args) {
         ) {
         return array('stat'=>'ok', 'storage_dir'=>$ciniki['tenant']['settings']['storage_dir']);
     }
+    elseif( $tnid > 0 && isset($ciniki['tenant']['uuid']) ) {
+        $storage_dir = $ciniki['config']['ciniki.core']['storage_dir'] . '/' 
+            . $ciniki['tenant']['uuid'][0] . '/' . $ciniki['tenant']['uuid'];
+        if( !isset($ciniki['tenant']['settings']) ) {
+            $ciniki['tenant']['settings'] = array('storage_dir'=>$storage_dir);
+        } else {
+            $ciniki['tenant']['settings']['storage_dir'] = $storage_dir;
+        }
+    }
     elseif( $tnid > 0 ) {
         $strsql = "SELECT uuid "
             . "FROM ciniki_tenants "
